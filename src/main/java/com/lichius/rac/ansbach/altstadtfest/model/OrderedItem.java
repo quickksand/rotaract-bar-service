@@ -11,6 +11,7 @@ public class OrderedItem {
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
 //    @ManyToOne
 //    @JoinColumn(name = "drink_id")
 //    private Drink drink;
