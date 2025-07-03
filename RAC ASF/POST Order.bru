@@ -1,7 +1,7 @@
 meta {
   name: POST Order
   type: http
-  seq: 2
+  seq: 4
 }
 
 post {
@@ -12,23 +12,15 @@ post {
 
 body:json {
   {
-    "items": [
-      {
-        "drink": {
-          "id": "64b7e3f1f1f1f1f1f1f1f1f1",
-          "name": "Cola",
-          "price": 2.5
-        },
-        "quantity": 2
-      },
-      {
-        "drink": {
-          "id": "64b7e3f1f1f1f1f1f1f1f1f2",
-          "name": "Bier",
-          "price": 3.0
-        },
-        "quantity": 3
-      }
-    ]
-  }
+      "items": [
+        {
+          "order": 1,
+          "product": {
+            "name": "Cola",
+            "price": 2.5
+          },
+          "quantity": 1
+        }
+      ]
+    }
 }
