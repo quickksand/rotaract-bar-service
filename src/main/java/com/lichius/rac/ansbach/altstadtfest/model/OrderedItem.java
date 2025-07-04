@@ -1,8 +1,10 @@
 package com.lichius.rac.ansbach.altstadtfest.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "ordered_items")
 public class OrderedItem {
 
     @Id
@@ -10,14 +12,15 @@ public class OrderedItem {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
+    @JoinColumn(name = "purchase_order_id")
+    @JsonBackReference
+    private PurchaseOrder purchaseOrder;
 
     @ManyToOne(
             cascade = CascadeType.PERSIST,
             fetch = FetchType.EAGER
     )
-//    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id")
     private Product product;
 
     @Column(nullable = false)
@@ -28,27 +31,27 @@ public class OrderedItem {
     public OrderedItem() {
     }
 
-    public OrderedItem(Order order, Product product, Integer quantity) {
-        this.order = order;
+    public OrderedItem(PurchaseOrder purchase_order, Product product, Integer quantity) {
+        this.purchaseOrder = purchase_order;
         this.product = product;
         this.quantity = quantity;
     }
 
+
+    // GETTER & SETTER
     public Long getId() {
         return id;
     }
-
-    // GETTER & SETTER
     public void setId(Long id) {
         this.id = id;
     }
 
-    public Order getOrder() {
-        return order;
+    public PurchaseOrder getPurchaseOrder() {
+        return purchaseOrder;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setPurchaseOrder(PurchaseOrder order) {
+        this.purchaseOrder = order;
     }
 
     public int getQuantity() {
@@ -61,7 +64,6 @@ public class OrderedItem {
     public Product getProduct() {
         return product;
     }
-
     public void setProduct(Product product) {
         this.product = product;
     }

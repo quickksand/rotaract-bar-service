@@ -1,63 +1,50 @@
 package com.lichius.rac.ansbach.altstadtfest.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "orders")
-public class Order {
+@Table(name = "purchase_orders")
+public class PurchaseOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "order_date")
     private LocalDateTime orderedAt;
 
     @OneToMany(
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
-            mappedBy = "order"
+            mappedBy = "purchaseOrder",
+            orphanRemoval = true
     )
+    @JsonManagedReference
+    @NotEmpty(message = "Eine Bestellung muss mindestens ein Item enthalten")
+    @Valid
     private List<OrderedItem> items = new ArrayList<>();
 
 
     // Konstruktoren
-    public Order() {
+    public PurchaseOrder() {
         this.orderedAt = LocalDateTime.now();
     }
+//    public PurchaseOrder(List<OrderedItem> items) {
+//        this();
+//        this.addOrderedItems(items);
+//    }
 
-    public Order(List<OrderedItem> items) {
-        this();
-        this.addOrderedItems(items);
-    }
 
-
-    // HELPER
-    public void addItem(OrderedItem item) {
-        items.add(item);
-        item.setOrder(this);
-    }
-
-    public void removeItem(OrderedItem item) {
-        items.remove(item);
-        item.setOrder(null);
-    }
-
-    // For bulk operations
-    public void addOrderedItems(Collection<OrderedItem> items) {
-        items.forEach(this::addItem);
-    }
-
+    // GETTER & SETTER
     public Long getId() {
         return id;
     }
-
-    // GETTER & SETTER
     public void setId(Long id) {
         this.id = id;
     }
@@ -65,9 +52,11 @@ public class Order {
     public List<OrderedItem> getItems() {
         return items;
     }
-
     public void setItems(List<OrderedItem> items) {
         this.items = items;
+//        if (this.items != null) {
+        this.items.forEach(item -> item.setPurchaseOrder(this));
+//        }
     }
 
     public LocalDateTime getOrderedAt() {

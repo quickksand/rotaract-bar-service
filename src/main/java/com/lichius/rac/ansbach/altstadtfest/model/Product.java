@@ -3,7 +3,6 @@ package com.lichius.rac.ansbach.altstadtfest.model;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Entity
 public class Product {
@@ -18,13 +17,10 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
-//    @OneToMany(mappedBy = "drink")
-//    private List<OrderedItem> orderedItemList = new ArrayList<>();
-
     public Product() {
     }
 
-    public Product(String name, BigDecimal price, List<OrderedItem> orderedItemList) {
+    public Product(String name, BigDecimal price) {
         this.name = name;
         this.price = price;
 //        this.orderedItemList = orderedItemList;
