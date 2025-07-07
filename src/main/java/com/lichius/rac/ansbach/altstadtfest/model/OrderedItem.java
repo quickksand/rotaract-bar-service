@@ -18,7 +18,7 @@ public class OrderedItem {
 
     @ManyToOne(
             cascade = CascadeType.PERSIST,
-            fetch = FetchType.EAGER
+            fetch = FetchType.LAZY
     )
     @JoinColumn(name = "product_id")
     private Product product;

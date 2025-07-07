@@ -2,8 +2,6 @@ package com.lichius.rac.ansbach.altstadtfest.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,8 +24,8 @@ public class PurchaseOrder {
             orphanRemoval = true
     )
     @JsonManagedReference
-    @NotEmpty(message = "Eine Bestellung muss mindestens ein Item enthalten")
-    @Valid
+//    @NotEmpty(message = "Eine Bestellung muss mindestens ein Item enthalten")
+//    @Valid
     private List<OrderedItem> items = new ArrayList<>();
 
 
@@ -39,6 +37,14 @@ public class PurchaseOrder {
 //        this();
 //        this.addOrderedItems(items);
 //    }
+
+
+    // HELPER
+
+    public void addOrderedItem(OrderedItem item) {
+        item.setPurchaseOrder(this);
+        this.items.add(item);
+    }
 
 
     // GETTER & SETTER
@@ -54,9 +60,6 @@ public class PurchaseOrder {
     }
     public void setItems(List<OrderedItem> items) {
         this.items = items;
-//        if (this.items != null) {
-        this.items.forEach(item -> item.setPurchaseOrder(this));
-//        }
     }
 
     public LocalDateTime getOrderedAt() {

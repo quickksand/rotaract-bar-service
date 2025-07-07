@@ -20,6 +20,11 @@ public class PurchaseOrderController {
         this.purchaseOrderService = purchaseOrderService;
     }
 
+    @GetMapping("/hi")
+    public ResponseEntity<String> hello() {
+        return new ResponseEntity<String>("Hello!", HttpStatus.OK);
+    }
+
     @GetMapping
     public ResponseEntity<List<PurchaseOrder>> getOrders() {
         return new ResponseEntity<List<PurchaseOrder>>(purchaseOrderService.findOrders(), HttpStatus.OK);
@@ -30,21 +35,14 @@ public class PurchaseOrderController {
         return new ResponseEntity<List<OrderedItem>>(purchaseOrderService.findOrdersByItemName(itemName), HttpStatus.OK);
     }
 
-    // /api/orders/hi
-    @GetMapping("/hi")
-    public ResponseEntity<String> hello(){
-        return new ResponseEntity<String>("Hello!", HttpStatus.OK);
-    }
-
     @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<PurchaseOrder> getOrderById(@PathVariable Long id) {
         return new ResponseEntity<PurchaseOrder>(purchaseOrderService.findOrderById(id), HttpStatus.OK);
     }
 
-
     @PostMapping
-    public ResponseEntity<PurchaseOrder> createOrder(@RequestBody PurchaseOrder order) {
-        PurchaseOrder saved = purchaseOrderService.createPurchaseOrder(order);
+    public ResponseEntity<PurchaseOrder> createOrder(@RequestBody PurchaseOrder orderDTO) {
+        PurchaseOrder saved = purchaseOrderService.createPurchaseOrder(orderDTO);
         return new ResponseEntity<PurchaseOrder>(saved, HttpStatus.OK);
     }
 
