@@ -1,4 +1,4 @@
-package com.lichius.rac.ansbach.altstadtfest.model;
+package com.lichius.rac.ansbach.altstadtfest.application.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

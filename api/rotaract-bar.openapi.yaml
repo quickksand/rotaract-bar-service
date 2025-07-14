@@ -1,7 +1,7 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   title: OpenAPI definition
-  version: v0
+  version: v1
 servers:
   - url: http://localhost:8080
     description: Generated server url
@@ -10,20 +10,14 @@ paths:
     get:
       tags:
         - purchase-order-controller
-      summary: Get all ordered items by item name
-      description: This endpoint gets all currently saved ordereditems by item name
+      summary: Get all orders
+      description: This endpoint gets all currently saved orders
       operationId: getOrders
-      parameters:
-        - name: itemName
-          in: query
-          required: true
-          schema:
-            type: string
       responses:
         "200":
           description: Successful
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
@@ -31,19 +25,19 @@ paths:
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/PurchaseOrder"
         "400":
-          description: Bad request - Invalid name provided
+          description: Bad request
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/OrderedItem"
+                  $ref: "#/components/schemas/PurchaseOrder"
     post:
       tags:
         - purchase-order-controller
@@ -60,19 +54,19 @@ paths:
         "200":
           description: Successful
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/PurchaseOrder"
         "400":
           description: Bad request - Invalid details provided
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/PurchaseOrder"
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/PurchaseOrder"
   /api/products:
@@ -84,7 +78,7 @@ paths:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
@@ -133,13 +127,13 @@ paths:
         "200":
           description: Successful greeting
           content:
-            '*/*':
+            application/json:
               schema:
                 type: string
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/json:
               schema:
                 type: string
 components:
@@ -150,13 +144,15 @@ components:
         id:
           type: integer
           format: int64
-        purchaseOrder:
-          $ref: "#/components/schemas/PurchaseOrder"
-        product:
-          $ref: "#/components/schemas/Product"
+        #        product:
+        #          $ref: "#/components/schemas/Product"
+        productId: # <- Viel besser!
+          type: integer
+          format: int64
         quantity:
           type: integer
           format: int32
+          minimum: 1
     Product:
       type: object
       properties:

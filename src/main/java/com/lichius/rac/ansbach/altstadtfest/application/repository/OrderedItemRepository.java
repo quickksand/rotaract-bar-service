@@ -1,6 +1,6 @@
-package com.lichius.rac.ansbach.altstadtfest.repository;
+package com.lichius.rac.ansbach.altstadtfest.application.repository;
 
-import com.lichius.rac.ansbach.altstadtfest.model.OrderedItem;
+import com.lichius.rac.ansbach.altstadtfest.application.model.OrderedItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

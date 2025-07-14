@@ -1,7 +1,7 @@
-package com.lichius.rac.ansbach.altstadtfest.service;
+package com.lichius.rac.ansbach.altstadtfest.application.service;
 
-import com.lichius.rac.ansbach.altstadtfest.model.Product;
-import com.lichius.rac.ansbach.altstadtfest.repository.ProductRepository;
+import com.lichius.rac.ansbach.altstadtfest.application.model.Product;
+import com.lichius.rac.ansbach.altstadtfest.application.repository.ProductRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
