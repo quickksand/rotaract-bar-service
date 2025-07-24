@@ -1,6 +1,7 @@
 package com.lichius.rac.ansbach.altstadtfest.application.model;
 
 import jakarta.persistence.*;
+import rotaract.bar.infrastructure.api.controller.model.ProductDto;
 
 import java.math.BigDecimal;
 
@@ -17,13 +18,17 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ProductDto.CategoryEnum category;
+
     public Product() {
     }
 
-    public Product(String name, BigDecimal price) {
+    public Product(String name, BigDecimal price, ProductDto.CategoryEnum category) {
         this.name = name;
         this.price = price;
-//        this.orderedItemList = orderedItemList;
+        this.category = category;
     }
 
 
@@ -49,5 +54,13 @@ public class Product {
 
     public Long getId() {
         return id;
+    }
+
+    public ProductDto.CategoryEnum getCategory() {
+        return category;
+    }
+
+    public void setCategory(ProductDto.CategoryEnum category) {
+        this.category = category;
     }
 }

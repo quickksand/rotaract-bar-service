@@ -14,16 +14,13 @@ public interface PurchaseOrderMapper {
     //    @Mapping(source = "orderedAt", target = "orderedAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     PurchaseOrderDto toDto(PurchaseOrder entity);
 
-    //    @Mapping(source = "orderedAt", target = "orderedAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-    PurchaseOrder toEntity(PurchaseOrderDto dto);
-
     // Custom Mapping-Methoden:
     default OffsetDateTime map(LocalDateTime localDateTime) {
         return localDateTime == null ? null : localDateTime.atOffset(ZoneOffset.UTC);
     }
 
-    default LocalDateTime map(OffsetDateTime offsetDateTime) {
-        return offsetDateTime == null ? null : offsetDateTime.toLocalDateTime();
-    }
+//    default LocalDateTime map(OffsetDateTime offsetDateTime) {
+//        return offsetDateTime == null ? null : offsetDateTime.toLocalDateTime();
+//    }
 
 }

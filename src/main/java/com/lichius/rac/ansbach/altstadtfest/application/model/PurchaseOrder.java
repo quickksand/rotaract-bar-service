@@ -1,6 +1,5 @@
 package com.lichius.rac.ansbach.altstadtfest.application.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -23,7 +22,7 @@ public class PurchaseOrder {
             mappedBy = "purchaseOrder",
             orphanRemoval = true
     )
-    @JsonManagedReference
+//    @JsonManagedReference
 //    @NotEmpty(message = "Eine Bestellung muss mindestens ein Item enthalten")
 //    @Valid
     private List<OrderedItem> items = new ArrayList<>();
@@ -33,10 +32,6 @@ public class PurchaseOrder {
     public PurchaseOrder() {
         this.orderedAt = LocalDateTime.now();
     }
-//    public PurchaseOrder(List<OrderedItem> items) {
-//        this();
-//        this.addOrderedItems(items);
-//    }
 
 
     // HELPER
@@ -58,18 +53,9 @@ public class PurchaseOrder {
     public List<OrderedItem> getItems() {
         return items;
     }
-    public void setItems(List<OrderedItem> items) {
-        this.items = items;
-    }
-
     public LocalDateTime getOrderedAt() {
         return orderedAt;
     }
-
-    public void setOrderedAt(LocalDateTime orderedAt) {
-        this.orderedAt = orderedAt;
-    }
-
 //    public double getTotalPrice() {
 //        return items.stream().mapToDouble(OrderedItem::getTotalPrice).sum();
 //    }

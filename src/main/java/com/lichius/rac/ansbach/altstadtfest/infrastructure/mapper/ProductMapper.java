@@ -7,6 +7,4 @@ import rotaract.bar.infrastructure.api.controller.model.ProductDto;
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
     ProductDto toDto(Product entity);
-
-    Product toEntity(ProductDto dto);
 }

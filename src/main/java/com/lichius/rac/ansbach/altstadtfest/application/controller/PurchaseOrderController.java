@@ -32,7 +32,7 @@ public class PurchaseOrderController implements PurchaseOrderControllerApi {
     @PostMapping
     public ResponseEntity<PurchaseOrderDto> createOrder(@RequestBody PurchaseOrderDto purchaseOrderDto) {
         PurchaseOrder purchaseOrder = purchaseOrderService.createPurchaseOrder(purchaseOrderDto);
-        return new ResponseEntity<PurchaseOrderDto>(purchaseOrderMapper.toDto(purchaseOrder), HttpStatus.OK);
+        return new ResponseEntity<>(purchaseOrderMapper.toDto(purchaseOrder), HttpStatus.OK);
     }
 
     @GetMapping
@@ -59,7 +59,7 @@ public class PurchaseOrderController implements PurchaseOrderControllerApi {
 
     @GetMapping("/hi")
     public ResponseEntity<String> hello() {
-        return new ResponseEntity<String>("Hello!", HttpStatus.OK);
+        return new ResponseEntity<>("Hello!", HttpStatus.OK);
     }
 
 

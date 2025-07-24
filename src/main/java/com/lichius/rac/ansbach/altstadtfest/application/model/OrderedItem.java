@@ -1,6 +1,5 @@
 package com.lichius.rac.ansbach.altstadtfest.application.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,7 +12,7 @@ public class OrderedItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "purchase_order_id")
-    @JsonBackReference
+//    @JsonBackReference
     private PurchaseOrder purchaseOrder;
 
     @ManyToOne(
@@ -31,23 +30,12 @@ public class OrderedItem {
     public OrderedItem() {
     }
 
-    public OrderedItem(PurchaseOrder purchase_order, Product product, Integer quantity) {
-        this.purchaseOrder = purchase_order;
-        this.product = product;
-        this.quantity = quantity;
-    }
-
-
     // GETTER & SETTER
     public Long getId() {
         return id;
     }
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public PurchaseOrder getPurchaseOrder() {
-        return purchaseOrder;
     }
 
     public void setPurchaseOrder(PurchaseOrder order) {
