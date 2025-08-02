@@ -22,11 +22,9 @@ public class PurchaseOrder {
             mappedBy = "purchaseOrder",
             orphanRemoval = true
     )
-//    @JsonManagedReference
-//    @NotEmpty(message = "Eine Bestellung muss mindestens ein Item enthalten")
-//    @Valid
     private List<OrderedItem> items = new ArrayList<>();
 
+    private Integer returnedCupsCount = 0;
 
     // Konstruktoren
     public PurchaseOrder() {
@@ -56,9 +54,14 @@ public class PurchaseOrder {
     public LocalDateTime getOrderedAt() {
         return orderedAt;
     }
-//    public double getTotalPrice() {
-//        return items.stream().mapToDouble(OrderedItem::getTotalPrice).sum();
-//    }
 
+    // Getter/Setter für returnedCupsCount
+    public Integer getReturnedCupsCount() {
+        return returnedCupsCount;
+    }
+
+    public void setReturnedCupsCount(Integer returnedCupsCount) {
+        this.returnedCupsCount = returnedCupsCount;
+    }
 
 }

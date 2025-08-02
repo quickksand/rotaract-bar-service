@@ -28,6 +28,9 @@ public class PurchaseOrderService {
 
     public PurchaseOrder createPurchaseOrder(PurchaseOrderDto purchaseOrderDTO) {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
+
+        purchaseOrder.setReturnedCupsCount(purchaseOrderDTO.getReturnedCupsCount());
+
         purchaseOrderDTO.getItems().forEach(itemDTO -> {
                     OrderedItem item = new OrderedItem();
 
@@ -45,12 +48,10 @@ public class PurchaseOrderService {
                 item.setQuantity(optionalQuantity.orElse(0));
                 purchaseOrder.addOrderedItem(item);
             }
-            return;
-                }
-        );
+
+        });
 
         return purchaseOrderRepository.save(purchaseOrder);
-//       return purchaseOrderDTO;
     }
 
     public PurchaseOrder findOrderById(Long id) {

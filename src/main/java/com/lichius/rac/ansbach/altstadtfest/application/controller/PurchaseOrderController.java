@@ -48,13 +48,9 @@ public class PurchaseOrderController implements PurchaseOrderControllerApi {
     @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<PurchaseOrderDto> getOrderById(@PathVariable Long id) {
         Optional<PurchaseOrder> purchaseOrder = Optional.ofNullable(purchaseOrderService.findOrderById(id));
-        if (purchaseOrder.isPresent()) {
-            return new ResponseEntity<>(
-                    purchaseOrderMapper.toDto(purchaseOrder.get()),
-                    HttpStatus.OK);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return purchaseOrder.map(order -> new ResponseEntity<>(
+                purchaseOrderMapper.toDto(order),
+                HttpStatus.OK)).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/hi")
