@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import rotaract.bar.infrastructure.api.controller.model.ProductDto;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Product {
@@ -21,6 +23,12 @@ public class Product {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProductDto.CategoryEnum category;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "product_ingredients",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
+    private List<Ingredient> ingredients = new ArrayList<>();
 
     public Product() {
     }
@@ -63,4 +71,13 @@ public class Product {
     public void setCategory(ProductDto.CategoryEnum category) {
         this.category = category;
     }
+
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(List<Ingredient> ingredients) {
+        this.ingredients = ingredients;
+    }
+
 }
