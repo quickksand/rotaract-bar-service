@@ -30,6 +30,7 @@ public class IngredientController implements IngredientControllerApi {
                 .toList(), HttpStatus.OK);
     }
 
+    //TODO Extract to Mapper
     private IngredientDto mapToDto(Ingredient ingredient) {
         IngredientDto dto = new IngredientDto();
         dto.setId(ingredient.getId());

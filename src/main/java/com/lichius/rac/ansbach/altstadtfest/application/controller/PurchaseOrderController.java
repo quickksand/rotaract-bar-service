@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/orders")
-//@CrossOrigin(origins = "http://localhost:4200")
 public class PurchaseOrderController implements PurchaseOrderControllerApi {
 
     private final PurchaseOrderService purchaseOrderService;
@@ -29,10 +28,10 @@ public class PurchaseOrderController implements PurchaseOrderControllerApi {
         this.purchaseOrderMapper = purchaseOrderMapper;
     }
 
-    @PostMapping
+    @PostMapping(produces = "application/json")
     public ResponseEntity<PurchaseOrderDto> createOrder(@RequestBody PurchaseOrderDto purchaseOrderDto) {
         PurchaseOrder purchaseOrder = purchaseOrderService.createPurchaseOrder(purchaseOrderDto);
-        return new ResponseEntity<>(purchaseOrderMapper.toDto(purchaseOrder), HttpStatus.OK);
+        return new ResponseEntity<>(purchaseOrderMapper.toDto(purchaseOrder), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -48,15 +47,10 @@ public class PurchaseOrderController implements PurchaseOrderControllerApi {
     @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<PurchaseOrderDto> getOrderById(@PathVariable Long id) {
         Optional<PurchaseOrder> purchaseOrder = Optional.ofNullable(purchaseOrderService.findOrderById(id));
-        return purchaseOrder.map(order -> new ResponseEntity<>(
-                purchaseOrderMapper.toDto(order),
-                HttpStatus.OK)).orElseGet(() -> ResponseEntity.notFound().build());
+        return purchaseOrder
+                .map(order -> new ResponseEntity<>(
+                    purchaseOrderMapper.toDto(order),
+                    HttpStatus.OK))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
-    @GetMapping("/hi")
-    public ResponseEntity<String> hello() {
-        return new ResponseEntity<>("Hello!", HttpStatus.OK);
-    }
-
-
 }

@@ -36,6 +36,5 @@ public class ProductController implements ProductControllerApi {
                         .map(productMapper::toDto)
                         .collect(Collectors.toList()),
                 HttpStatus.OK);
-//        return new ResponseEntity<List<ProductDto>>(List.of(new ProductDto()), HttpStatus.OK);
     }
 }
