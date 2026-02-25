@@ -1,4 +1,4 @@
-package com.lichius.rac.ansbach.altstadtfest.controller;
+package com.lichius.rac.ansbach.altstadtfest.application.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lichius.rac.ansbach.altstadtfest.application.controller.PurchaseOrderController;

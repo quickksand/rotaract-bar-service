@@ -11,8 +11,4 @@ public interface OrderedItemMapper {
     @Mapping(source = "product.id", target = "productId")
     OrderedItemDto toDto(OrderedItem entity);
 
-//    @Mapping(source = "productId", target = "product.id")
-//    @Mapping(target = "purchaseOrder", ignore = true)
-//    OrderedItem toEntity(OrderedItemDto dto);
-
 }

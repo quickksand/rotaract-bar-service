@@ -1,4 +1,4 @@
-package com.lichius.rac.ansbach.altstadtfest.controller;
+package com.lichius.rac.ansbach.altstadtfest.application.controller;
 
 import com.lichius.rac.ansbach.altstadtfest.application.controller.ProductController;
 import com.lichius.rac.ansbach.altstadtfest.application.model.Product;
