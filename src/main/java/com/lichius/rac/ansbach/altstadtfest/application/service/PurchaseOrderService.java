@@ -54,7 +54,7 @@ public class PurchaseOrderService {
         return purchaseOrderRepository.save(purchaseOrder);
     }
 
-    public PurchaseOrder findOrderById(Long id) {
+    public Optional<PurchaseOrder> findOrderById(Long id) {
         return purchaseOrderRepository.findOrderById(id);
     }
 

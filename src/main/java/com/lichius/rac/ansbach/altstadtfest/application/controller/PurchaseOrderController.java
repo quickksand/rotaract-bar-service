@@ -2,6 +2,7 @@ package com.lichius.rac.ansbach.altstadtfest.application.controller;
 
 import com.lichius.rac.ansbach.altstadtfest.application.model.PurchaseOrder;
 import com.lichius.rac.ansbach.altstadtfest.application.service.PurchaseOrderService;
+import com.lichius.rac.ansbach.altstadtfest.exception.NotFoundException;
 import com.lichius.rac.ansbach.altstadtfest.infrastructure.mapper.PurchaseOrderMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,11 +47,11 @@ public class PurchaseOrderController implements PurchaseOrderControllerApi {
 
     @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<PurchaseOrderDto> getOrderById(@PathVariable Long id) {
-        Optional<PurchaseOrder> purchaseOrder = Optional.ofNullable(purchaseOrderService.findOrderById(id));
+        Optional<PurchaseOrder> purchaseOrder = purchaseOrderService.findOrderById(id);
         return purchaseOrder
                 .map(order -> new ResponseEntity<>(
                     purchaseOrderMapper.toDto(order),
                     HttpStatus.OK))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(NotFoundException::new);
     }
 }

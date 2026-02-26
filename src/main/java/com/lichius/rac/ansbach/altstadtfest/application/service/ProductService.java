@@ -5,6 +5,7 @@ import com.lichius.rac.ansbach.altstadtfest.application.model.Product;
 import com.lichius.rac.ansbach.altstadtfest.application.repository.IngredientRepository;
 import com.lichius.rac.ansbach.altstadtfest.application.repository.ProductRepository;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import rotaract.bar.infrastructure.api.controller.model.ProductDto;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @Service
+@Slf4j
 @DependsOn("ingredientService")
 public class ProductService {
 
@@ -61,11 +63,11 @@ public class ProductService {
         if (productRepository.count() == 0) {
             // 1. Products speichern
             List<Product> products = productRepository.saveAll(getDefaultProducts());
-            System.out.println("✅ Standard Products initialized");
+            log.info("✅ Standard Products initialized");
 
             // 2. Ingredients zuweisen
             assignIngredientsToProducts(products);
-            System.out.println("✅ Ingredients assigned to Products");
+            log.info("✅ Ingredients assigned to Products");
         }
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lichius.rac.ansbach.altstadtfest.application.controller.PurchaseOrderController;
 import com.lichius.rac.ansbach.altstadtfest.application.model.PurchaseOrder;
 import com.lichius.rac.ansbach.altstadtfest.application.service.PurchaseOrderService;
+import com.lichius.rac.ansbach.altstadtfest.exception.NotFoundException;
 import com.lichius.rac.ansbach.altstadtfest.infrastructure.mapper.PurchaseOrderMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import rotaract.bar.infrastructure.api.controller.model.OrderedItemDto;
 import rotaract.bar.infrastructure.api.controller.model.PurchaseOrderDto;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -54,7 +57,7 @@ public class PurchaseOrderControllerTest {
         PurchaseOrderDto purchaseOrderDto = new PurchaseOrderDto();
         purchaseOrderDto.setId(purchaseOrder.getId());
 
-        given(purchaseOrderService.findOrderById(1L)).willReturn(purchaseOrder);
+        given(purchaseOrderService.findOrderById(1L)).willReturn(Optional.of(purchaseOrder));
         given(purchaseOrderMapper.toDto(any())).willReturn(purchaseOrderDto);
 
         mockMvc.perform(get("/api/orders/" + purchaseOrder.getId())
@@ -62,6 +65,14 @@ public class PurchaseOrderControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(purchaseOrderDto.getId().intValue())));
+    }
+
+    @Test
+    void testGetPurchaseOrderThrowsException() throws Exception {
+//        given(purchaseOrderService.findOrderById(any())).willThrow(NotFoundException.class);
+        mockMvc.perform(get("/api/orders/99")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test
