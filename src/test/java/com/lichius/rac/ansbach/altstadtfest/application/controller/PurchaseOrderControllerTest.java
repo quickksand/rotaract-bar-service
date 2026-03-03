@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PurchaseOrderController.class)
-public class PurchaseOrderControllerTest {
+class PurchaseOrderControllerTest {
 
     @MockitoBean
     PurchaseOrderService purchaseOrderService;
@@ -69,7 +69,7 @@ public class PurchaseOrderControllerTest {
 
     @Test
     void testGetPurchaseOrderThrowsException() throws Exception {
-//        given(purchaseOrderService.findOrderById(any())).willThrow(NotFoundException.class);
+        given(purchaseOrderService.findOrderById(any())).willThrow(NotFoundException.class);
         mockMvc.perform(get("/api/orders/99")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
