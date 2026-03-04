@@ -23,8 +23,15 @@
   - was ist wenn backend nicht erreichbar (kein wlan?) -> nicht in order tap erst auf erfolgreichen post machen
 
 - [ ] Trinkgeld eintragen
+- [ ] Eigenbedarf erfassen
 
 ### Should
+- [ ] Wann geht was aus?
+  - [ ] Annahme Eis
+- [ ] Auswertung
+- [ ] Auswertung Export
+- [ ] Kreditkartenzahlung / SumUP / Paypal anbinden - Stand
+
 - [ ] Long-Press für remove und large quantity
 - [ ] Drinkberechnung - wann laufen wir estimatedly leer?
 - [ ] Auswertungen unter /auswertung
