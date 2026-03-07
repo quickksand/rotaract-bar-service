@@ -26,7 +26,8 @@ public class PurchaseOrderService {
     private final ProductRepository productRepository;
 
     public PurchaseOrder createPurchaseOrder(PurchaseOrderDto purchaseOrderDTO) {
-        PurchaseOrder purchaseOrder = PurchaseOrder.builder().returnedCupsCount(purchaseOrderDTO.getReturnedCupsCount()).build();
+        PurchaseOrder purchaseOrder = new PurchaseOrder();
+        purchaseOrder.setReturnedCupsCount(purchaseOrderDTO.getReturnedCupsCount());
 
         List<@Valid OrderedItemDto> orderDTOItems = purchaseOrderDTO.getItems();
         if (orderDTOItems.isEmpty()) {
