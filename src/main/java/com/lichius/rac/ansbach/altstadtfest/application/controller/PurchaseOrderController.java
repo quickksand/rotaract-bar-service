@@ -2,6 +2,7 @@ package com.lichius.rac.ansbach.altstadtfest.application.controller;
 
 import com.lichius.rac.ansbach.altstadtfest.application.model.PurchaseOrder;
 import com.lichius.rac.ansbach.altstadtfest.application.service.PurchaseOrderService;
+import com.lichius.rac.ansbach.altstadtfest.exception.NotFoundException;
 import com.lichius.rac.ansbach.altstadtfest.infrastructure.mapper.PurchaseOrderMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/orders")
-//@CrossOrigin(origins = "http://localhost:4200")
 public class PurchaseOrderController implements PurchaseOrderControllerApi {
 
     private final PurchaseOrderService purchaseOrderService;
@@ -29,10 +29,10 @@ public class PurchaseOrderController implements PurchaseOrderControllerApi {
         this.purchaseOrderMapper = purchaseOrderMapper;
     }
 
-    @PostMapping
+    @PostMapping(produces = "application/json")
     public ResponseEntity<PurchaseOrderDto> createOrder(@RequestBody PurchaseOrderDto purchaseOrderDto) {
         PurchaseOrder purchaseOrder = purchaseOrderService.createPurchaseOrder(purchaseOrderDto);
-        return new ResponseEntity<>(purchaseOrderMapper.toDto(purchaseOrder), HttpStatus.OK);
+        return new ResponseEntity<>(purchaseOrderMapper.toDto(purchaseOrder), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -47,16 +47,11 @@ public class PurchaseOrderController implements PurchaseOrderControllerApi {
 
     @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<PurchaseOrderDto> getOrderById(@PathVariable Long id) {
-        Optional<PurchaseOrder> purchaseOrder = Optional.ofNullable(purchaseOrderService.findOrderById(id));
-        return purchaseOrder.map(order -> new ResponseEntity<>(
-                purchaseOrderMapper.toDto(order),
-                HttpStatus.OK)).orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<PurchaseOrder> purchaseOrder = purchaseOrderService.findOrderById(id);
+        return purchaseOrder
+                .map(order -> new ResponseEntity<>(
+                    purchaseOrderMapper.toDto(order),
+                    HttpStatus.OK))
+                .orElseThrow(NotFoundException::new);
     }
-
-    @GetMapping("/hi")
-    public ResponseEntity<String> hello() {
-        return new ResponseEntity<>("Hello!", HttpStatus.OK);
-    }
-
-
 }

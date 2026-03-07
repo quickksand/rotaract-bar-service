@@ -2,29 +2,31 @@ package com.lichius.rac.ansbach.altstadtfest.application.service;
 
 import com.lichius.rac.ansbach.altstadtfest.application.model.Ingredient;
 import com.lichius.rac.ansbach.altstadtfest.application.model.Product;
-import com.lichius.rac.ansbach.altstadtfest.application.repository.IngredientRepository;
 import com.lichius.rac.ansbach.altstadtfest.application.repository.ProductRepository;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rotaract.bar.infrastructure.api.controller.model.ProductDto;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;
+import java.util.Map;
 
 @Service
+@Slf4j
 @DependsOn("ingredientService")
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final IngredientRepository ingredientRepository;
+    private final IngredientService ingredientService;
 
-    public ProductService(ProductRepository productRepository,
-                          IngredientRepository ingredientRepository) {
+    public ProductService(ProductRepository productRepository, IngredientService ingredientService) {
         this.productRepository = productRepository;
-        this.ingredientRepository = ingredientRepository;
+        this.ingredientService = ingredientService;
     }
 
     public List<Product> getProducts() {
@@ -32,7 +34,7 @@ public class ProductService {
     }
 
     private List<Product> getDefaultProducts() {
-        return Arrays.asList(
+        return List.of(
                 // DRINKS
                 new Product("Cuba Libre", new BigDecimal("6.50"), ProductDto.CategoryEnum.DRINKS),
                 new Product("Gin Tonic", new BigDecimal("7.00"), ProductDto.CategoryEnum.DRINKS),
@@ -57,101 +59,109 @@ public class ProductService {
     }
 
     @PostConstruct
-    public void initalizeProducts() {
+    @Transactional
+    public void initializeProducts() {
         if (productRepository.count() == 0) {
             // 1. Products speichern
             List<Product> products = productRepository.saveAll(getDefaultProducts());
-            System.out.println("✅ Standard Products initialized");
+            log.info("✅ Standard Products initialized");
 
             // 2. Ingredients zuweisen
             assignIngredientsToProducts(products);
-            System.out.println("✅ Ingredients assigned to Products");
+            log.info("✅ Ingredients assigned to Products");
         }
     }
 
     private void assignIngredientsToProducts(List<Product> products) {
-        // Helper Method um Ingredient per Name zu finden
-        Function<String, Ingredient> findIngredient = (String name) ->
-                ingredientRepository.findByName(name)
-                        .orElseThrow(() -> new RuntimeException("Ingredient not found: " + name));
+        List<Ingredient> ingredients = ingredientService.getIngredients();
+
+        Map<String, Ingredient> ingredientMap = new HashMap<>();
+        for (Ingredient ingredient : ingredients) {
+            ingredientMap.put(ingredient.getName(), ingredient);
+        }
 
         for (Product product : products) {
             switch (product.getName()) {
                 case "Cuba Libre":
                     product.getIngredients().addAll(Arrays.asList(
-                            findIngredient.apply("Rum"),
-                            findIngredient.apply("Cola"),
-                            findIngredient.apply("Limette"),
-                            findIngredient.apply("Limettensaft")
+                            getIngredientOrThrow(ingredientMap, "Rum"),
+                            getIngredientOrThrow(ingredientMap, "Cola"),
+                            getIngredientOrThrow(ingredientMap, "Limette"),
+                            getIngredientOrThrow(ingredientMap, "Limettensaft")
                     ));
                     break;
 
                 case "Gin Tonic":
                     product.getIngredients().addAll(Arrays.asList(
-                            findIngredient.apply("Gin"),
-                            findIngredient.apply("Tonic Water"),
-                            findIngredient.apply("Gurke")
+                            getIngredientOrThrow(ingredientMap, "Gin"),
+                            getIngredientOrThrow(ingredientMap, "Tonic Water"),
+                            getIngredientOrThrow(ingredientMap, "Gurke")
                     ));
                     break;
 
                 case "Moscow Mule":
                     product.getIngredients().addAll(Arrays.asList(
-                            findIngredient.apply("Vodka"),
-                            findIngredient.apply("Ginger Beer"),
-                            findIngredient.apply("Limette")
+                            getIngredientOrThrow(ingredientMap, "Vodka"),
+                            getIngredientOrThrow(ingredientMap, "Ginger Beer"),
+                            getIngredientOrThrow(ingredientMap, "Limette")
                     ));
                     break;
 
                 case "Munich Mule":
                     product.getIngredients().addAll(Arrays.asList(
-                            findIngredient.apply("Gin"),
-                            findIngredient.apply("Ginger Beer"),
-                            findIngredient.apply("Limettensaft"),
-                            findIngredient.apply("Gurke")
+                            getIngredientOrThrow(ingredientMap, "Gin"),
+                            getIngredientOrThrow(ingredientMap, "Ginger Beer"),
+                            getIngredientOrThrow(ingredientMap, "Limettensaft"),
+                            getIngredientOrThrow(ingredientMap, "Gurke")
                     ));
                     break;
 
                 case "Wodka Bull":
                     product.getIngredients().addAll(Arrays.asList(
-                            findIngredient.apply("Vodka"),
-                            findIngredient.apply("Red Bull")
+                            getIngredientOrThrow(ingredientMap, "Vodka"),
+                            getIngredientOrThrow(ingredientMap, "Red Bull")
                     ));
                     break;
 
                 case "Aperol Spritz":
                     product.getIngredients().addAll(Arrays.asList(
-                            findIngredient.apply("Aperol"),
-                            findIngredient.apply("Prosecco"),
-                            findIngredient.apply("Wasser spritzig"),
-                            findIngredient.apply("Orange")
+                            getIngredientOrThrow(ingredientMap, "Aperol"),
+                            getIngredientOrThrow(ingredientMap, "Prosecco"),
+                            getIngredientOrThrow(ingredientMap, "Wasser spritzig"),
+                            getIngredientOrThrow(ingredientMap, "Orange")
                     ));
                     break;
 
                 case "Sarti Spritz":
                     product.getIngredients().addAll(Arrays.asList(
-                            findIngredient.apply("Sarti"),
-                            findIngredient.apply("Prosecco"),
-                            findIngredient.apply("Wasser spritzig"),
-                            findIngredient.apply("Zitrone")
+                            getIngredientOrThrow(ingredientMap, "Sarti"),
+                            getIngredientOrThrow(ingredientMap, "Prosecco"),
+                            getIngredientOrThrow(ingredientMap, "Wasser spritzig"),
+                            getIngredientOrThrow(ingredientMap, "Zitrone")
                     ));
                     break;
 
                 case "Wildberry Lillet":
                     product.getIngredients().addAll(Arrays.asList(
-                            findIngredient.apply("Lillet"),
-                            findIngredient.apply("Wildberry"),
-                            findIngredient.apply("Beeren-Mix")
+                            getIngredientOrThrow(ingredientMap, "Lillet"),
+                            getIngredientOrThrow(ingredientMap, "Wildberry"),
+                            getIngredientOrThrow(ingredientMap, "Beeren-Mix")
                     ));
                     break;
 
-                // Andere Products haben keine Ingredients (Bier, etc.)
                 default:
-                    // Keine Ingredients
                     break;
             }
         }
 
-        // Alle Products mit neuen Ingredients speichern
         productRepository.saveAll(products);
+    }
+
+    private Ingredient getIngredientOrThrow(Map<String, Ingredient> ingredientMap, String name) {
+        Ingredient ingredient = ingredientMap.get(name);
+        if (ingredient == null) {
+            throw new RuntimeException("Ingredient not found: " + name);
+        }
+        return ingredient;
     }
 }
