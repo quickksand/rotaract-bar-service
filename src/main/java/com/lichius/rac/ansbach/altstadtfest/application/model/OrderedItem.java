@@ -10,7 +10,7 @@ public class OrderedItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne//(fetch = FetchType.LAZY)
     @JoinColumn(name = "purchase_order_id")
 //    @JsonBackReference
     private PurchaseOrder purchaseOrder;

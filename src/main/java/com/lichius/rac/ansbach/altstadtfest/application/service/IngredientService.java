@@ -5,8 +5,8 @@ import com.lichius.rac.ansbach.altstadtfest.application.repository.IngredientRep
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -24,7 +24,7 @@ public class IngredientService {
     }
 
     private List<Ingredient> getDefaultIngredients() {
-        return Arrays.asList(
+        return List.of(
                 // Spirituosen
                 new Ingredient("Rum"),
                 new Ingredient("Gin"),
@@ -67,6 +67,7 @@ public class IngredientService {
     }
 
     @PostConstruct
+    @Transactional
     public void initializeIngredients() {
         if (ingredientRepository.count() == 0) {
             ingredientRepository.saveAll(getDefaultIngredients());
