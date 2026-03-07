@@ -5,9 +5,6 @@ import com.lichius.rac.ansbach.altstadtfest.application.model.Product;
 import com.lichius.rac.ansbach.altstadtfest.application.model.PurchaseOrder;
 import com.lichius.rac.ansbach.altstadtfest.application.repository.ProductRepository;
 import com.lichius.rac.ansbach.altstadtfest.application.repository.PurchaseOrderRepository;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rotaract.bar.infrastructure.api.controller.model.OrderedItemDto;
@@ -18,19 +15,22 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@Transactional
-@AllArgsConstructor
+//@Transactional
 public class PurchaseOrderService {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final ProductRepository productRepository;
 
-    public PurchaseOrder createPurchaseOrder(PurchaseOrderDto purchaseOrderDTO) {
-        PurchaseOrder purchaseOrder = PurchaseOrder.builder()
-                .returnedCupsCount(purchaseOrderDTO.getReturnedCupsCount())
-                .build();
+    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, OrderedItemRepository orderedItemRepository, ProductRepository productRepository) {
+        this.purchaseOrderRepository = purchaseOrderRepository;
+        this.orderedItemRepository = orderedItemRepository;
+        this.productRepository = productRepository;
+    }
 
-        List<@Valid OrderedItemDto> orderDTOItems = purchaseOrderDTO.getItems();
+    public PurchaseOrder createPurchaseOrder(PurchaseOrderDto purchaseOrderDTO) {
+        PurchaseOrder purchaseOrder = new PurchaseOrder();
+
+        purchaseOrder.setReturnedCupsCount(purchaseOrderDTO.getReturnedCupsCount());
 
         if (orderDTOItems.isEmpty()) {
             return null;
@@ -42,8 +42,8 @@ public class PurchaseOrderService {
             if (itemDTO.getProductId() != null) {
                 Optional<Product> itemProduct = productRepository.findById(itemDTO.getProductId());
                 if (itemProduct.isEmpty()) {
-                    log.error("WARNUNG: Product nicht gefunden: " + itemDTO.getProductId().byteValue());
-                    return;
+                    System.out.println("WARNUNG: Product nicht gefunden: " + itemDTO.getProductId().byteValue());
+                    return; // Item überspringen
                 }
 
                 item.setProduct(itemProduct.get());
