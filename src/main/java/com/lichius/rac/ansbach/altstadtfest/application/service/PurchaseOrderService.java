@@ -55,7 +55,7 @@ public class PurchaseOrderService {
     }
 
     public Optional<PurchaseOrder> findOrderById(Long id) {
-        return purchaseOrderRepository.findOrderById(id);
+        return purchaseOrderRepository.findById(id);
     }
 
     public List<PurchaseOrder> findOrders() {

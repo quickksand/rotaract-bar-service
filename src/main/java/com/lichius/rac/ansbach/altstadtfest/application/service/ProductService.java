@@ -2,7 +2,6 @@ package com.lichius.rac.ansbach.altstadtfest.application.service;
 
 import com.lichius.rac.ansbach.altstadtfest.application.model.Ingredient;
 import com.lichius.rac.ansbach.altstadtfest.application.model.Product;
-import com.lichius.rac.ansbach.altstadtfest.application.repository.IngredientRepository;
 import com.lichius.rac.ansbach.altstadtfest.application.repository.ProductRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +24,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final IngredientService ingredientService;
 
-    public ProductService(ProductRepository productRepository,
-                          IngredientRepository ingredientRepository, IngredientService ingredientService) {
+    public ProductService(ProductRepository productRepository, IngredientService ingredientService) {
         this.productRepository = productRepository;
         this.ingredientService = ingredientService;
     }
