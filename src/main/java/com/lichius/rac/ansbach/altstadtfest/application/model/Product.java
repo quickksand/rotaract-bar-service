@@ -1,6 +1,7 @@
 package com.lichius.rac.ansbach.altstadtfest.application.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 import rotaract.bar.infrastructure.api.controller.model.ProductDto;
 
 import java.math.BigDecimal;
@@ -24,6 +25,10 @@ public class Product {
     @Column(nullable = false)
     private ProductDto.CategoryEnum category;
 
+    @ColumnDefault("false")
+    @Column(nullable = false)
+    private boolean requiresDeposit;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "product_ingredients",
             joinColumns = @JoinColumn(name = "product_id"),
@@ -37,6 +42,13 @@ public class Product {
         this.name = name;
         this.price = price;
         this.category = category;
+    }
+
+    public Product(String name, BigDecimal price, ProductDto.CategoryEnum category, boolean requiresDeposit) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.requiresDeposit = requiresDeposit;
     }
 
 
@@ -78,6 +90,14 @@ public class Product {
 
     public void setIngredients(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    public boolean isRequiresDeposit() {
+        return requiresDeposit;
+    }
+
+    public void setRequiresDeposit(boolean requiresDeposit) {
+        this.requiresDeposit = requiresDeposit;
     }
 
 }

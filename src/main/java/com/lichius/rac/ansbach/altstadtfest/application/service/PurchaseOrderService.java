@@ -9,6 +9,8 @@ import com.lichius.rac.ansbach.altstadtfest.application.repository.PurchaseOrder
 import org.springframework.stereotype.Service;
 import rotaract.bar.infrastructure.api.controller.model.PurchaseOrderDto;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +33,10 @@ public class PurchaseOrderService {
 
         purchaseOrder.setReturnedCupsCount(purchaseOrderDTO.getReturnedCupsCount());
 
+        if (purchaseOrderDTO.getTipAmount() != null) {
+            purchaseOrder.setTipAmount(java.math.BigDecimal.valueOf(purchaseOrderDTO.getTipAmount()));
+        }
+
         purchaseOrderDTO.getItems().forEach(itemDTO -> {
                     OrderedItem item = new OrderedItem();
 
@@ -51,6 +57,13 @@ public class PurchaseOrderService {
 
         });
 
+        // tokensIssued = Summe der Mengen aller Artikel mit Pfand
+        int tokensIssued = purchaseOrder.getItems().stream()
+                .filter(item -> item.getProduct() != null && item.getProduct().isRequiresDeposit())
+                .mapToInt(OrderedItem::getQuantity)
+                .sum();
+        purchaseOrder.setTokensIssued(tokensIssued);
+
         return purchaseOrderRepository.save(purchaseOrder);
     }
 
@@ -58,7 +71,15 @@ public class PurchaseOrderService {
         return purchaseOrderRepository.findOrderById(id);
     }
 
-    public List<PurchaseOrder> findOrders() {
+    public List<PurchaseOrder> findOrders(Integer year, OffsetDateTime from, OffsetDateTime to) {
+        if (from != null && to != null) {
+            return purchaseOrderRepository.findByOrderedAtBetween(from.toLocalDateTime(), to.toLocalDateTime());
+        }
+        if (year != null) {
+            LocalDateTime start = LocalDateTime.of(year, 1, 1, 0, 0);
+            LocalDateTime end = start.plusYears(1).minusNanos(1);
+            return purchaseOrderRepository.findByOrderedAtBetween(start, end);
+        }
         return purchaseOrderRepository.findAll();
     }
 

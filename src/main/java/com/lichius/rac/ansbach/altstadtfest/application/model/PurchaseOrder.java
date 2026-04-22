@@ -2,6 +2,7 @@ package com.lichius.rac.ansbach.altstadtfest.application.model;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,10 @@ public class PurchaseOrder {
     private List<OrderedItem> items = new ArrayList<>();
 
     private Integer returnedCupsCount = 0;
+
+    private BigDecimal tipAmount = BigDecimal.ZERO;
+
+    private Integer tokensIssued = 0;
 
     // Konstruktoren
     public PurchaseOrder() {
@@ -62,6 +67,22 @@ public class PurchaseOrder {
 
     public void setReturnedCupsCount(Integer returnedCupsCount) {
         this.returnedCupsCount = returnedCupsCount;
+    }
+
+    public BigDecimal getTipAmount() {
+        return tipAmount;
+    }
+
+    public void setTipAmount(BigDecimal tipAmount) {
+        this.tipAmount = tipAmount;
+    }
+
+    public Integer getTokensIssued() {
+        return tokensIssued;
+    }
+
+    public void setTokensIssued(Integer tokensIssued) {
+        this.tokensIssued = tokensIssued;
     }
 
 }

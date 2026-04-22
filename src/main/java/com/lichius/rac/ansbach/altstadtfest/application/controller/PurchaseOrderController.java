@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import rotaract.bar.infrastructure.api.controller.PurchaseOrderControllerApi;
 import rotaract.bar.infrastructure.api.controller.model.PurchaseOrderDto;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,9 +37,12 @@ public class PurchaseOrderController implements PurchaseOrderControllerApi {
     }
 
     @GetMapping
-    public ResponseEntity<List<PurchaseOrderDto>> getOrders() {
+    public ResponseEntity<List<PurchaseOrderDto>> getOrders(
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) OffsetDateTime from,
+            @RequestParam(required = false) OffsetDateTime to) {
         return new ResponseEntity<>(
-                purchaseOrderService.findOrders()
+                purchaseOrderService.findOrders(year, from, to)
                         .stream()
                         .map(purchaseOrderMapper::toDto)
                         .collect(Collectors.toList())
