@@ -25,7 +25,7 @@ public class OrderedItem {
     @Column(nullable = false)
     private int quantity;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean bottleSale = false;
 
     @Column
