@@ -25,6 +25,12 @@ public class OrderedItem {
     @Column(nullable = false)
     private int quantity;
 
+    @Column(nullable = false)
+    private boolean bottleSale = false;
+
+    @Column
+    private Double customPrice;
+
 
     // Konstruktoren
     public OrderedItem() {
@@ -54,6 +60,22 @@ public class OrderedItem {
     }
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public boolean isBottleSale() {
+        return bottleSale;
+    }
+
+    public void setBottleSale(boolean bottleSale) {
+        this.bottleSale = bottleSale;
+    }
+
+    public Double getCustomPrice() {
+        return customPrice;
+    }
+
+    public void setCustomPrice(Double customPrice) {
+        this.customPrice = customPrice;
     }
 
     //    public double getTotalPrice() {
