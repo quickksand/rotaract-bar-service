@@ -51,7 +51,7 @@ paths:
               $ref: "#/components/schemas/PurchaseOrder"
         required: true
       responses:
-        "200":
+        "201":
           description: Successful
           content:
             application/json:
