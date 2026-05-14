@@ -53,6 +53,10 @@ public class PurchaseOrderService {
 
                 Optional<Integer> optionalQuantity = Optional.ofNullable(itemDTO.getQuantity());
                 item.setQuantity(optionalQuantity.orElse(0));
+
+                item.setBottleSale(Boolean.TRUE.equals(itemDTO.getBottleSale()));
+                item.setCustomPrice(itemDTO.getCustomPrice());
+
                 purchaseOrder.addOrderedItem(item);
             }
         });
