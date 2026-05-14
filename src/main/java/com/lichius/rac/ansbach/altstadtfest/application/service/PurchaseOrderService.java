@@ -1,6 +1,7 @@
 package com.lichius.rac.ansbach.altstadtfest.application.service;
 
 import com.lichius.rac.ansbach.altstadtfest.application.model.OrderedItem;
+import com.lichius.rac.ansbach.altstadtfest.application.model.PaymentMethod;
 import com.lichius.rac.ansbach.altstadtfest.application.model.Product;
 import com.lichius.rac.ansbach.altstadtfest.application.model.PurchaseOrder;
 import com.lichius.rac.ansbach.altstadtfest.application.repository.ProductRepository;
@@ -28,6 +29,10 @@ public class PurchaseOrderService {
     public PurchaseOrder createPurchaseOrder(PurchaseOrderDto purchaseOrderDTO) {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setReturnedCupsCount(purchaseOrderDTO.getReturnedCupsCount());
+        purchaseOrder.setTipAmount(purchaseOrderDTO.getTipAmount());
+        if (purchaseOrderDTO.getPaymentMethod() != null) {
+            purchaseOrder.setPaymentMethod(PaymentMethod.valueOf(purchaseOrderDTO.getPaymentMethod().getValue()));
+        }
 
         List<@Valid OrderedItemDto> orderDTOItems = purchaseOrderDTO.getItems();
         if (orderDTOItems.isEmpty()) {

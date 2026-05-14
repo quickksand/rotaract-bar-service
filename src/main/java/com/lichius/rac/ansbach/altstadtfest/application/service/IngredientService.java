@@ -71,7 +71,6 @@ public class IngredientService {
     public void initializeIngredients() {
         if (ingredientRepository.count() == 0) {
             ingredientRepository.saveAll(getDefaultIngredients());
-            log.info("✅ Standard Ingredients initialized");
         }
     }
 }

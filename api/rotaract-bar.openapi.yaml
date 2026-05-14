@@ -91,7 +91,7 @@ paths:
       summary: "Get all ingredients"
       responses:
         '200':
-          description: "List of ingredients"
+          description: OK
           content:
             application/json:
               schema:
@@ -192,7 +192,6 @@ components:
           format: int64
         name:
           type: string
-          description: "Ingredient name (e.g., Rum, Cola, Limette)"
       required:
         - id
         - name
@@ -213,4 +212,12 @@ components:
           type: integer
           format: int32
           minimum: 0
-          description: "Number of cups returned with this order"
+        tipAmount:
+          type: number
+          format: double
+          minimum: 0
+          description: "Optional tip amount in EUR"
+        paymentMethod:
+          type: string
+          enum: [ CASH, PAYPAL ]
+          description: "Payment method used for this order"
