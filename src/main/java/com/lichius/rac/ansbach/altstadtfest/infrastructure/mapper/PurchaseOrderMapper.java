@@ -1,5 +1,6 @@
 package com.lichius.rac.ansbach.altstadtfest.infrastructure.mapper;
 
+import com.lichius.rac.ansbach.altstadtfest.application.model.PaymentMethod;
 import com.lichius.rac.ansbach.altstadtfest.application.model.PurchaseOrder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,6 +18,10 @@ public interface PurchaseOrderMapper {
 
     default OffsetDateTime map(LocalDateTime localDateTime) {
         return localDateTime == null ? null : localDateTime.atOffset(ZoneOffset.UTC);
+    }
+
+    default PurchaseOrderDto.PaymentMethodEnum map(PaymentMethod paymentMethod) {
+        return paymentMethod == null ? null : PurchaseOrderDto.PaymentMethodEnum.valueOf(paymentMethod.name());
     }
 
 }

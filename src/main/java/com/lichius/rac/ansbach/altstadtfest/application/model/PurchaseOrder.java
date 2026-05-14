@@ -30,6 +30,11 @@ public class PurchaseOrder {
 
     private Integer returnedCupsCount = 0;
 
+    private Double tipAmount;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
     // Konstruktoren
     public PurchaseOrder() {
         this.orderedAt = LocalDateTime.now();
@@ -65,6 +70,22 @@ public class PurchaseOrder {
 
     public void setReturnedCupsCount(Integer returnedCupsCount) {
         this.returnedCupsCount = returnedCupsCount;
+    }
+
+    public Double getTipAmount() {
+        return tipAmount;
+    }
+
+    public void setTipAmount(Double tipAmount) {
+        this.tipAmount = tipAmount;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
 }
