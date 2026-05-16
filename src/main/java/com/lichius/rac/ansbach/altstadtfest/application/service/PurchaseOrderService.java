@@ -33,6 +33,8 @@ public class PurchaseOrderService {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setReturnedCupsCount(purchaseOrderDTO.getReturnedCupsCount());
         purchaseOrder.setTipAmount(purchaseOrderDTO.getTipAmount());
+        purchaseOrder.setFreeDrinksEarned(purchaseOrderDTO.getFreeDrinksEarned());
+        purchaseOrder.setFreeDrinkDiscount(purchaseOrderDTO.getFreeDrinkDiscount());
         if (purchaseOrderDTO.getPaymentMethod() != null) {
             purchaseOrder.setPaymentMethod(PaymentMethod.valueOf(purchaseOrderDTO.getPaymentMethod().getValue()));
         }
