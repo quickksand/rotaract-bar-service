@@ -1,8 +1,6 @@
 package com.lichius.rac.ansbach.altstadtfest.application.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,8 +8,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "purchase_orders")
-@Builder
-@AllArgsConstructor
 public class PurchaseOrder {
 
     @Id
@@ -34,6 +30,10 @@ public class PurchaseOrder {
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
+
+    private Integer freeDrinksEarned;
+
+    private Double freeDrinkDiscount;
 
     // Konstruktoren
     public PurchaseOrder() {
@@ -86,6 +86,22 @@ public class PurchaseOrder {
 
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    public Integer getFreeDrinksEarned() {
+        return freeDrinksEarned;
+    }
+
+    public void setFreeDrinksEarned(Integer freeDrinksEarned) {
+        this.freeDrinksEarned = freeDrinksEarned;
+    }
+
+    public Double getFreeDrinkDiscount() {
+        return freeDrinkDiscount;
+    }
+
+    public void setFreeDrinkDiscount(Double freeDrinkDiscount) {
+        this.freeDrinkDiscount = freeDrinkDiscount;
     }
 
 }

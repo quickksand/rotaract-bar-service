@@ -1,7 +1,6 @@
 package com.lichius.rac.ansbach.altstadtfest.application.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lichius.rac.ansbach.altstadtfest.application.controller.PurchaseOrderController;
 import com.lichius.rac.ansbach.altstadtfest.application.model.PurchaseOrder;
 import com.lichius.rac.ansbach.altstadtfest.application.service.PurchaseOrderService;
 import com.lichius.rac.ansbach.altstadtfest.exception.NotFoundException;
@@ -12,12 +11,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import rotaract.bar.infrastructure.api.controller.model.OrderedItemDto;
 import rotaract.bar.infrastructure.api.controller.model.PurchaseOrderDto;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,7 +49,8 @@ class PurchaseOrderControllerTest {
 
     @Test
     void testGetPurchaseOrderById() throws Exception {
-        PurchaseOrder purchaseOrder = PurchaseOrder.builder().id(1L).build();
+        PurchaseOrder purchaseOrder = new PurchaseOrder();
+        purchaseOrder.setId(1L);
         PurchaseOrderDto purchaseOrderDto = new PurchaseOrderDto();
         purchaseOrderDto.setId(purchaseOrder.getId());
 
@@ -77,7 +74,8 @@ class PurchaseOrderControllerTest {
 
     @Test
     void testPostOrder() throws Exception {
-        PurchaseOrder purchaseOrder = PurchaseOrder.builder().id(1L).build();
+        PurchaseOrder purchaseOrder = new PurchaseOrder();
+        purchaseOrder.setId(1L);
         PurchaseOrderDto someOrderDto = new PurchaseOrderDto();
         someOrderDto.setId(1L);
 

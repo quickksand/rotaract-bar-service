@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rotaract.bar.infrastructure.api.controller.PurchaseOrderControllerApi;
+import rotaract.bar.infrastructure.api.controller.model.BatchOrderImportDto;
+import rotaract.bar.infrastructure.api.controller.model.BatchOrderResultDto;
 import rotaract.bar.infrastructure.api.controller.model.PurchaseOrderDto;
 
 import java.util.List;
@@ -27,6 +29,16 @@ public class PurchaseOrderController implements PurchaseOrderControllerApi {
     ) {
         this.purchaseOrderService = purchaseOrderService;
         this.purchaseOrderMapper = purchaseOrderMapper;
+    }
+
+    @Override
+    @PostMapping(value = "/batch", produces = "application/json")
+    public ResponseEntity<BatchOrderResultDto> importOrdersBatch(BatchOrderImportDto batchOrderImportDto) {
+        PurchaseOrderService.BatchImportResult result = purchaseOrderService.importOrdersBatch(batchOrderImportDto);
+        BatchOrderResultDto dto = new BatchOrderResultDto();
+        dto.setCreated(result.created().stream().map(purchaseOrderMapper::toDto).collect(Collectors.toList()));
+        dto.setErrors(result.errors());
+        return new ResponseEntity<>(dto, HttpStatus.MULTI_STATUS);
     }
 
     @PostMapping(produces = "application/json")
