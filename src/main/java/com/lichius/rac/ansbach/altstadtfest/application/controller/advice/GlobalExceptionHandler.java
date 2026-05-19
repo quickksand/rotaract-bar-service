@@ -1,5 +1,6 @@
 package com.lichius.rac.ansbach.altstadtfest.application.controller.advice;
 
+import com.lichius.rac.ansbach.altstadtfest.exception.InvalidOrderException;
 import com.lichius.rac.ansbach.altstadtfest.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

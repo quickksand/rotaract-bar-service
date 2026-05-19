@@ -1,12 +1,12 @@
 package com.lichius.rac.ansbach.altstadtfest.application.service;
 
-import com.lichius.rac.ansbach.altstadtfest.application.controller.advice.InvalidOrderException;
 import com.lichius.rac.ansbach.altstadtfest.application.model.OrderedItem;
 import com.lichius.rac.ansbach.altstadtfest.application.model.PaymentMethod;
 import com.lichius.rac.ansbach.altstadtfest.application.model.Product;
 import com.lichius.rac.ansbach.altstadtfest.application.model.PurchaseOrder;
 import com.lichius.rac.ansbach.altstadtfest.application.repository.ProductRepository;
 import com.lichius.rac.ansbach.altstadtfest.application.repository.PurchaseOrderRepository;
+import com.lichius.rac.ansbach.altstadtfest.exception.InvalidOrderException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -31,8 +31,9 @@ public class PurchaseOrderController implements PurchaseOrderControllerApi {
         this.purchaseOrderMapper = purchaseOrderMapper;
     }
 
+    @Override
     @PostMapping(value = "/batch", produces = "application/json")
-    public ResponseEntity<BatchOrderResultDto> importOrdersBatch(@RequestBody BatchOrderImportDto batchOrderImportDto) {
+    public ResponseEntity<BatchOrderResultDto> importOrdersBatch(BatchOrderImportDto batchOrderImportDto) {
         PurchaseOrderService.BatchImportResult result = purchaseOrderService.importOrdersBatch(batchOrderImportDto);
         BatchOrderResultDto dto = new BatchOrderResultDto();
         dto.setCreated(result.created().stream().map(purchaseOrderMapper::toDto).collect(Collectors.toList()));
