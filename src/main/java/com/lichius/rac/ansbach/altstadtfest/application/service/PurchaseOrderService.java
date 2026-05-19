@@ -18,6 +18,7 @@ import rotaract.bar.infrastructure.api.controller.model.PurchaseOrderDto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -78,7 +79,7 @@ public class PurchaseOrderService {
         List<PurchaseOrder> created = new ArrayList<>();
         List<String> errors = new ArrayList<>();
 
-        List<PurchaseOrderDto> orders = batchOrderImportDto.getOrders();
+        List<PurchaseOrderDto> orders = Objects.requireNonNullElse(batchOrderImportDto.getOrders(), List.of());
         for (int i = 0; i < orders.size(); i++) {
             try {
                 PurchaseOrder order = createPurchaseOrder(orders.get(i));

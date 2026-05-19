@@ -16,4 +16,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.notFound().build();
     }
 
+    @ExceptionHandler(InvalidOrderException.class)
+    public ResponseEntity<String> handleInvalidOrderException(InvalidOrderException ex) {
+        log.warn("Ungültige Bestellung: {}", ex.getMessage());
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
 }
