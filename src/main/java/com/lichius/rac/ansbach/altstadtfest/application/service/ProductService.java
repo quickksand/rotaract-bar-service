@@ -152,8 +152,8 @@ public class ProductService {
                     product.getIngredients().addAll(Arrays.asList(
                             getIngredientOrThrow(ingredientMap, "Rum"),
                             getIngredientOrThrow(ingredientMap, "Cola"),
-                            getIngredientOrThrow(ingredientMap, "Limette"),
-                            getIngredientOrThrow(ingredientMap, "Limettensaft")
+                            getIngredientOrThrow(ingredientMap, "Limettensaft"),
+                            getIngredientOrThrow(ingredientMap, "Limette")
                     ));
                     break;
 
@@ -161,7 +161,7 @@ public class ProductService {
                     product.getIngredients().addAll(Arrays.asList(
                             getIngredientOrThrow(ingredientMap, "Gin"),
                             getIngredientOrThrow(ingredientMap, "Tonic Water"),
-                            getIngredientOrThrow(ingredientMap, "Gurke")
+                            getIngredientOrThrow(ingredientMap, "Gurke/Zitrone")
                     ));
                     break;
 
