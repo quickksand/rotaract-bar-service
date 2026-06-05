@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: OpenAPI definition
-  version: 1.4.0
+  version: 1.5.1
 servers:
   - url: http://localhost:8080
     description: Generated server url
@@ -562,15 +562,31 @@ components:
         totalRevenue:
           type: number
           format: double
-          description: "Sum of (product price × quantity) across all matched orders"
+          description: "Net revenue across all payment methods (CASH + PayPal), after freeDrinkDiscount, respecting customPrice for bottle sales"
         totalTips:
           type: number
           format: double
-          description: "Sum of tip amounts across all matched orders"
+          description: "Sum of tip amounts across all matched orders (CASH + PayPal)"
+        cashRevenue:
+          type: number
+          format: double
+          description: "Net revenue from cash orders only (paymentMethod == CASH)"
+        paypalRevenue:
+          type: number
+          format: double
+          description: "Net revenue from PayPal orders only (paymentMethod == PAYPAL)"
+        cashTips:
+          type: number
+          format: double
+          description: "Sum of tip amounts from cash orders"
+        paypalTips:
+          type: number
+          format: double
+          description: "Sum of tip amounts from PayPal orders"
         expectedCashInRegister:
           type: number
           format: double
-          description: "totalRevenue + totalTips + (cupsIssued - cupsReturned) × depositAmountPerCup"
+          description: "cashRevenue + cashTips + (totalCupsIssued - totalCupsReturned) × depositAmountPerCup"
         depositAmountPerCup:
           type: number
           format: double

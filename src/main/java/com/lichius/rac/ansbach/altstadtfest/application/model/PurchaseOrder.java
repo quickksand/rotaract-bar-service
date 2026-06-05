@@ -35,6 +35,8 @@ public class PurchaseOrder {
 
     private Double freeDrinkDiscount;
 
+    private Integer tokensIssued;
+
     // Konstruktoren
     public PurchaseOrder() {
         this.orderedAt = LocalDateTime.now();
@@ -102,6 +104,14 @@ public class PurchaseOrder {
 
     public void setFreeDrinkDiscount(Double freeDrinkDiscount) {
         this.freeDrinkDiscount = freeDrinkDiscount;
+    }
+
+    public Integer getTokensIssued() {
+        return tokensIssued;
+    }
+
+    public void setTokensIssued(Integer tokensIssued) {
+        this.tokensIssued = tokensIssued;
     }
 
 }
