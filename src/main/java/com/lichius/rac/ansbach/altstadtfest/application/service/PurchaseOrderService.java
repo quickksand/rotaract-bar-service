@@ -36,12 +36,14 @@ public class PurchaseOrderService {
         purchaseOrder.setTipAmount(purchaseOrderDTO.getTipAmount());
         purchaseOrder.setFreeDrinksEarned(purchaseOrderDTO.getFreeDrinksEarned());
         purchaseOrder.setFreeDrinkDiscount(purchaseOrderDTO.getFreeDrinkDiscount());
+
         if (purchaseOrderDTO.getPaymentMethod() != null) {
             purchaseOrder.setPaymentMethod(PaymentMethod.valueOf(purchaseOrderDTO.getPaymentMethod().getValue()));
         }
 
         List<@Valid OrderedItemDto> orderDTOItems = purchaseOrderDTO.getItems();
-        if (orderDTOItems.isEmpty()) {
+        if (orderDTOItems.isEmpty() &&
+                Optional.ofNullable(purchaseOrderDTO.getReturnedCupsCount()).orElse(0) <= 0) {
             throw new InvalidOrderException("Order contains no items");
         }
 

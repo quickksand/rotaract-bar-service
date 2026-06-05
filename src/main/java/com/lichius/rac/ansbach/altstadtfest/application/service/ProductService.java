@@ -2,7 +2,10 @@ package com.lichius.rac.ansbach.altstadtfest.application.service;
 
 import com.lichius.rac.ansbach.altstadtfest.application.model.Ingredient;
 import com.lichius.rac.ansbach.altstadtfest.application.model.Product;
+import com.lichius.rac.ansbach.altstadtfest.application.model.ProductsMeta;
 import com.lichius.rac.ansbach.altstadtfest.application.repository.ProductRepository;
+import com.lichius.rac.ansbach.altstadtfest.application.repository.ProductsMetaRepository;
+import com.lichius.rac.ansbach.altstadtfest.exception.NotFoundException;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.DependsOn;
@@ -11,10 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import rotaract.bar.infrastructure.api.controller.model.ProductDto;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -22,15 +23,55 @@ import java.util.Map;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductsMetaRepository productsMetaRepository;
     private final IngredientService ingredientService;
 
-    public ProductService(ProductRepository productRepository, IngredientService ingredientService) {
+    public ProductService(ProductRepository productRepository,
+                          ProductsMetaRepository productsMetaRepository,
+                          IngredientService ingredientService) {
         this.productRepository = productRepository;
+        this.productsMetaRepository = productsMetaRepository;
         this.ingredientService = ingredientService;
     }
 
     public List<Product> getProducts() {
-        return productRepository.findAll();
+        return productRepository.findAllByOrderByIdAsc();
+    }
+
+    public ProductsMeta getProductsMeta() {
+        return productsMetaRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("ProductsMeta nicht initialisiert"));
+    }
+
+    @Transactional
+    public Product updateProduct(Long id, Double price, Boolean outOfStock) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Product nicht gefunden: id=" + id));
+
+        if (price != null) {
+            product.setPrice(BigDecimal.valueOf(price));
+        }
+        if (outOfStock != null) {
+            product.setOutOfStock(outOfStock);
+        }
+
+        Product saved = productRepository.save(product);
+        touchProductsMeta();
+        return saved;
+    }
+
+    @Transactional
+    public List<Product> resetProducts() {
+        List<Product> existing = productRepository.findAllByOrderByIdAsc();
+        for (Product product : existing) {
+            product.setPrice(product.getOriginalPrice());
+            product.setOutOfStock(false);
+        }
+
+        List<Product> saved = productRepository.saveAll(existing);
+        touchProductsMeta();
+        log.info("✅ Alle Produkte auf Standardpreise zurückgesetzt");
+        return saved;
     }
 
     private List<Product> getDefaultProducts() {
@@ -61,6 +102,12 @@ public class ProductService {
     @PostConstruct
     @Transactional
     public void initializeProducts() {
+        // ProductsMeta initialisieren (Singleton-Row mit id=1)
+        if (productsMetaRepository.count() == 0) {
+            productsMetaRepository.save(new ProductsMeta(LocalDateTime.now()));
+            log.info("✅ ProductsMeta initialized");
+        }
+
         if (productRepository.count() == 0) {
             // 1. Products speichern
             List<Product> products = productRepository.saveAll(getDefaultProducts());
@@ -69,6 +116,25 @@ public class ProductService {
             // 2. Ingredients zuweisen
             assignIngredientsToProducts(products);
             log.info("✅ Ingredients assigned to Products");
+        } else {
+            // Migration: originalPrice für bestehende Produkte befüllen
+            List<Product> products = productRepository.findAllByOrderByIdAsc();
+            boolean migrated = false;
+            Map<String, BigDecimal> defaultPrices = new HashMap<>();
+            for (Product p : getDefaultProducts()) {
+                defaultPrices.put(p.getName(), p.getOriginalPrice());
+            }
+            for (Product product : products) {
+                if (product.getOriginalPrice() == null) {
+                    BigDecimal defPrice = defaultPrices.get(product.getName());
+                    product.setOriginalPrice(defPrice != null ? defPrice : product.getPrice());
+                    migrated = true;
+                }
+            }
+            if (migrated) {
+                productRepository.saveAll(products);
+                log.info("✅ originalPrice für bestehende Produkte migriert");
+            }
         }
     }
 
@@ -86,8 +152,8 @@ public class ProductService {
                     product.getIngredients().addAll(Arrays.asList(
                             getIngredientOrThrow(ingredientMap, "Rum"),
                             getIngredientOrThrow(ingredientMap, "Cola"),
-                            getIngredientOrThrow(ingredientMap, "Limette"),
-                            getIngredientOrThrow(ingredientMap, "Limettensaft")
+                            getIngredientOrThrow(ingredientMap, "Limettensaft"),
+                            getIngredientOrThrow(ingredientMap, "Limette")
                     ));
                     break;
 
@@ -95,7 +161,7 @@ public class ProductService {
                     product.getIngredients().addAll(Arrays.asList(
                             getIngredientOrThrow(ingredientMap, "Gin"),
                             getIngredientOrThrow(ingredientMap, "Tonic Water"),
-                            getIngredientOrThrow(ingredientMap, "Gurke")
+                            getIngredientOrThrow(ingredientMap, "Gurke/Zitrone")
                     ));
                     break;
 
@@ -163,5 +229,12 @@ public class ProductService {
             throw new RuntimeException("Ingredient not found: " + name);
         }
         return ingredient;
+    }
+
+    private void touchProductsMeta() {
+        ProductsMeta meta = productsMetaRepository.findById(1L)
+                .orElse(new ProductsMeta(LocalDateTime.now()));
+        meta.setProductsUpdatedAt(LocalDateTime.now());
+        productsMetaRepository.save(meta);
     }
 }

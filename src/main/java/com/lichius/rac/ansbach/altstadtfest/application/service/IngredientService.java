@@ -49,6 +49,7 @@ public class IngredientService {
                 new Ingredient("Zitrone"),
                 new Ingredient("Orange"),
                 new Ingredient("Gurke"),
+                new Ingredient("Gurke/Zitrone"),
                 new Ingredient("Beeren-Mix"),
 
                 // Wein

@@ -103,6 +103,7 @@ Base URL: `http://localhost:8080`
 
 | Method | Path | Description |
 |---|---|---|
+| `POST` | `/api/auth/login` | Authenticate with admin PIN, returns JWT |
 | `GET` | `/api/orders` | List all purchase orders |
 | `POST` | `/api/orders` | Create a new order |
 | `GET` | `/api/orders/{id}` | Get a specific order |
@@ -228,5 +229,6 @@ Mappers are composed (e.g., `PurchaseOrderMapper` uses `OrderedItemMapper` and `
 6. **`@DependsOn`** ordering matters for `@PostConstruct` seeding — `IngredientService` must init before `ProductService`.
 7. **Dependency injection** uses field injection (`@Autowired`) in some places and constructor injection in others — prefer constructor injection for new code.
 8. **The `update` DDL strategy** means schema is auto-updated; no Liquibase/Flyway migration files exist.
-9. **Some code is in German** (comments, warning messages like "WARNUNG: Product nicht gefunden") — this is intentional and consistent with the team's language.
+9. **Admin endpoints are JWT-protected** — `PATCH /api/products/{id}` and `POST /api/products/reset` require `Authorization: Bearer <jwt>`. The `JwtAuthFilter` (in `infrastructure/filter/`) validates the token. Login via `POST /api/auth/login` with `{pin}` returns a JWT (HS256, 8h TTL). Config: `app.admin-pin` and `app.jwt-secret` in `application.yaml`.
+10. **Some code is in German** (comments, warning messages like "WARNUNG: Product nicht gefunden") — this is intentional and consistent with the team's language.
 10. **Test coverage is minimal** — when adding new features, consider adding at least a basic integration test.

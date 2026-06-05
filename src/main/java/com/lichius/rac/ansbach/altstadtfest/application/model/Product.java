@@ -20,6 +20,9 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Column
+    private BigDecimal originalPrice;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProductDto.CategoryEnum category;
@@ -30,12 +33,16 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
     private List<Ingredient> ingredients = new ArrayList<>();
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean outOfStock = false;
+
     public Product() {
     }
 
     public Product(String name, BigDecimal price, ProductDto.CategoryEnum category) {
         this.name = name;
         this.price = price;
+        this.originalPrice = price;
         this.category = category;
     }
 
@@ -46,6 +53,14 @@ public class Product {
 
     public BigDecimal getPrice() {
         return price;
+    }
+
+    public BigDecimal getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public void setOriginalPrice(BigDecimal originalPrice) {
+        this.originalPrice = originalPrice;
     }
 
     public void setName(String name) {
@@ -78,6 +93,14 @@ public class Product {
 
     public void setIngredients(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    public boolean isOutOfStock() {
+        return outOfStock;
+    }
+
+    public void setOutOfStock(boolean outOfStock) {
+        this.outOfStock = outOfStock;
     }
 
 }

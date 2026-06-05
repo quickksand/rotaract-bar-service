@@ -19,3 +19,8 @@ spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
 # Actuator
 management.endpoints.web.exposure.include: health
 management.endpoint.health.show-details: never
+
+# Admin Auth
+app.admin-pin: "sichael"
+app.jwt-secret: "RoTaRaCtAnSbAcH-AlTsTaDtFeSt-2026-SeCrEt-KeY!"
+
