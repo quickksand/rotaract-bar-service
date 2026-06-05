@@ -10,7 +10,7 @@ public class OrderedItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne//(fetch = FetchType.LAZY)
     @JoinColumn(name = "purchase_order_id")
 //    @JsonBackReference
     private PurchaseOrder purchaseOrder;
@@ -24,6 +24,12 @@ public class OrderedItem {
 
     @Column(nullable = false)
     private int quantity;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean bottleSale = false;
+
+    @Column
+    private Double customPrice;
 
 
     // Konstruktoren
@@ -54,6 +60,22 @@ public class OrderedItem {
     }
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public boolean isBottleSale() {
+        return bottleSale;
+    }
+
+    public void setBottleSale(boolean bottleSale) {
+        this.bottleSale = bottleSale;
+    }
+
+    public Double getCustomPrice() {
+        return customPrice;
+    }
+
+    public void setCustomPrice(Double customPrice) {
+        this.customPrice = customPrice;
     }
 
     //    public double getTotalPrice() {

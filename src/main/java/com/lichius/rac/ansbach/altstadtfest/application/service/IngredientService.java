@@ -3,12 +3,14 @@ package com.lichius.rac.ansbach.altstadtfest.application.service;
 import com.lichius.rac.ansbach.altstadtfest.application.model.Ingredient;
 import com.lichius.rac.ansbach.altstadtfest.application.repository.IngredientRepository;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
+@Slf4j
 public class IngredientService {
 
     private final IngredientRepository ingredientRepository;
@@ -22,7 +24,7 @@ public class IngredientService {
     }
 
     private List<Ingredient> getDefaultIngredients() {
-        return Arrays.asList(
+        return List.of(
                 // Spirituosen
                 new Ingredient("Rum"),
                 new Ingredient("Gin"),
@@ -47,6 +49,7 @@ public class IngredientService {
                 new Ingredient("Zitrone"),
                 new Ingredient("Orange"),
                 new Ingredient("Gurke"),
+                new Ingredient("Gurke/Zitrone"),
                 new Ingredient("Beeren-Mix"),
 
                 // Wein
@@ -65,10 +68,10 @@ public class IngredientService {
     }
 
     @PostConstruct
+    @Transactional
     public void initializeIngredients() {
         if (ingredientRepository.count() == 0) {
             ingredientRepository.saveAll(getDefaultIngredients());
-            System.out.println("✅ Standard Ingredients initialized");
         }
     }
 }

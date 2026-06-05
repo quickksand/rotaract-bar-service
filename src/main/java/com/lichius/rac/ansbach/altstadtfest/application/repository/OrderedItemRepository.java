@@ -10,8 +10,6 @@ import java.util.List;
 
 public interface OrderedItemRepository extends JpaRepository<OrderedItem, Long> {
 
-    OrderedItem findByPurchaseOrder_Id(Long purchaseOrderId);
-
     List<OrderedItem> findByProduct_Name(String productName);
 
     @Query("SELECT oi.product.id, oi.product.name, oi.product.category, " +

@@ -2,7 +2,6 @@ package com.lichius.rac.ansbach.altstadtfest.application.model;
 
 import jakarta.persistence.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +26,14 @@ public class PurchaseOrder {
 
     private Integer returnedCupsCount = 0;
 
-    private BigDecimal tipAmount = BigDecimal.ZERO;
+    private Double tipAmount;
 
-    private Integer tokensIssued = 0;
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
+    private Integer freeDrinksEarned;
+
+    private Double freeDrinkDiscount;
 
     // Konstruktoren
     public PurchaseOrder() {
@@ -60,7 +64,6 @@ public class PurchaseOrder {
         return orderedAt;
     }
 
-    // Getter/Setter für returnedCupsCount
     public Integer getReturnedCupsCount() {
         return returnedCupsCount;
     }
@@ -69,20 +72,36 @@ public class PurchaseOrder {
         this.returnedCupsCount = returnedCupsCount;
     }
 
-    public BigDecimal getTipAmount() {
+    public Double getTipAmount() {
         return tipAmount;
     }
 
-    public void setTipAmount(BigDecimal tipAmount) {
+    public void setTipAmount(Double tipAmount) {
         this.tipAmount = tipAmount;
     }
 
-    public Integer getTokensIssued() {
-        return tokensIssued;
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
     }
 
-    public void setTokensIssued(Integer tokensIssued) {
-        this.tokensIssued = tokensIssued;
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public Integer getFreeDrinksEarned() {
+        return freeDrinksEarned;
+    }
+
+    public void setFreeDrinksEarned(Integer freeDrinksEarned) {
+        this.freeDrinksEarned = freeDrinksEarned;
+    }
+
+    public Double getFreeDrinkDiscount() {
+        return freeDrinkDiscount;
+    }
+
+    public void setFreeDrinkDiscount(Double freeDrinkDiscount) {
+        this.freeDrinkDiscount = freeDrinkDiscount;
     }
 
 }

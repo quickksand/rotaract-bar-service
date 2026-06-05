@@ -1,20 +1,22 @@
 package com.lichius.rac.ansbach.altstadtfest.application.controller;
 
+import com.lichius.rac.ansbach.altstadtfest.application.model.Product;
+import com.lichius.rac.ansbach.altstadtfest.application.model.ProductsMeta;
 import com.lichius.rac.ansbach.altstadtfest.application.service.ProductService;
 import com.lichius.rac.ansbach.altstadtfest.infrastructure.mapper.ProductMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rotaract.bar.infrastructure.api.controller.ProductControllerApi;
 import rotaract.bar.infrastructure.api.controller.model.ProductDto;
+import rotaract.bar.infrastructure.api.controller.model.ProductsMetaDto;
+import rotaract.bar.infrastructure.api.controller.model.UpdateProductRequestDto;
 
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/products")
 public class ProductController implements ProductControllerApi {
 
     private final ProductService productService;
@@ -28,7 +30,7 @@ public class ProductController implements ProductControllerApi {
         this.productMapper = productMapper;
     }
 
-    @GetMapping
+    @Override
     public ResponseEntity<List<ProductDto>> getProducts() {
         return new ResponseEntity<>(
                 productService.getProducts()
@@ -36,6 +38,28 @@ public class ProductController implements ProductControllerApi {
                         .map(productMapper::toDto)
                         .collect(Collectors.toList()),
                 HttpStatus.OK);
-//        return new ResponseEntity<List<ProductDto>>(List.of(new ProductDto()), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<ProductDto> updateProduct(Long id, UpdateProductRequestDto request) {
+        Product updated = productService.updateProduct(id, request.getPrice(), request.getOutOfStock());
+        return ResponseEntity.ok(productMapper.toDto(updated));
+    }
+
+    @Override
+    public ResponseEntity<List<ProductDto>> resetProducts() {
+        List<ProductDto> products = productService.resetProducts()
+                .stream()
+                .map(productMapper::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(products);
+    }
+
+    @Override
+    public ResponseEntity<ProductsMetaDto> getProductsMeta() {
+        ProductsMeta meta = productService.getProductsMeta();
+        ProductsMetaDto dto = new ProductsMetaDto();
+        dto.setProductsUpdatedAt(meta.getProductsUpdatedAt().atOffset(ZoneOffset.UTC));
+        return ResponseEntity.ok(dto);
     }
 }

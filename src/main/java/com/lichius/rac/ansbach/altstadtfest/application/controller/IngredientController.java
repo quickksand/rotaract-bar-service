@@ -2,6 +2,7 @@ package com.lichius.rac.ansbach.altstadtfest.application.controller;
 
 import com.lichius.rac.ansbach.altstadtfest.application.model.Ingredient;
 import com.lichius.rac.ansbach.altstadtfest.application.service.IngredientService;
+import com.lichius.rac.ansbach.altstadtfest.infrastructure.mapper.IngredientMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,24 +18,19 @@ import java.util.List;
 public class IngredientController implements IngredientControllerApi {
 
     private final IngredientService ingredientService;
+    private final IngredientMapper ingredientMapper;
 
-    public IngredientController(IngredientService ingredientService) {
+    public IngredientController(IngredientService ingredientService, IngredientMapper ingredientMapper) {
         this.ingredientService = ingredientService;
+        this.ingredientMapper = ingredientMapper;
     }
 
     @GetMapping
     public ResponseEntity<List<IngredientDto>> getIngredients() {
         List<Ingredient> ingredients = ingredientService.getIngredients();
         return new ResponseEntity<>(ingredients.stream()
-                .map(this::mapToDto)
+                .map(ingredientMapper::toDto)
                 .toList(), HttpStatus.OK);
-    }
-
-    private IngredientDto mapToDto(Ingredient ingredient) {
-        IngredientDto dto = new IngredientDto();
-        dto.setId(ingredient.getId());
-        dto.setName(ingredient.getName());
-        return dto;
     }
 
 }

@@ -1,60 +1,71 @@
 package com.lichius.rac.ansbach.altstadtfest.application.service;
 
 import com.lichius.rac.ansbach.altstadtfest.application.model.OrderedItem;
+import com.lichius.rac.ansbach.altstadtfest.application.model.PaymentMethod;
 import com.lichius.rac.ansbach.altstadtfest.application.model.Product;
 import com.lichius.rac.ansbach.altstadtfest.application.model.PurchaseOrder;
-import com.lichius.rac.ansbach.altstadtfest.application.repository.OrderedItemRepository;
 import com.lichius.rac.ansbach.altstadtfest.application.repository.ProductRepository;
 import com.lichius.rac.ansbach.altstadtfest.application.repository.PurchaseOrderRepository;
+import com.lichius.rac.ansbach.altstadtfest.exception.InvalidOrderException;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import rotaract.bar.infrastructure.api.controller.model.BatchOrderImportDto;
+import rotaract.bar.infrastructure.api.controller.model.OrderedItemDto;
 import rotaract.bar.infrastructure.api.controller.model.PurchaseOrderDto;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
-//@Transactional
+@Transactional
+@AllArgsConstructor
 public class PurchaseOrderService {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
-    private final OrderedItemRepository orderedItemRepository;
     private final ProductRepository productRepository;
-
-    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, OrderedItemRepository orderedItemRepository, ProductRepository productRepository) {
-        this.purchaseOrderRepository = purchaseOrderRepository;
-        this.orderedItemRepository = orderedItemRepository;
-        this.productRepository = productRepository;
-    }
 
     public PurchaseOrder createPurchaseOrder(PurchaseOrderDto purchaseOrderDTO) {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-
         purchaseOrder.setReturnedCupsCount(purchaseOrderDTO.getReturnedCupsCount());
+        purchaseOrder.setTipAmount(purchaseOrderDTO.getTipAmount());
+        purchaseOrder.setFreeDrinksEarned(purchaseOrderDTO.getFreeDrinksEarned());
+        purchaseOrder.setFreeDrinkDiscount(purchaseOrderDTO.getFreeDrinkDiscount());
 
-        if (purchaseOrderDTO.getTipAmount() != null) {
-            purchaseOrder.setTipAmount(java.math.BigDecimal.valueOf(purchaseOrderDTO.getTipAmount()));
+        if (purchaseOrderDTO.getPaymentMethod() != null) {
+            purchaseOrder.setPaymentMethod(PaymentMethod.valueOf(purchaseOrderDTO.getPaymentMethod().getValue()));
         }
 
-        purchaseOrderDTO.getItems().forEach(itemDTO -> {
-                    OrderedItem item = new OrderedItem();
+        List<@Valid OrderedItemDto> orderDTOItems = purchaseOrderDTO.getItems();
+        if (orderDTOItems.isEmpty() &&
+                Optional.ofNullable(purchaseOrderDTO.getReturnedCupsCount()).orElse(0) <= 0) {
+            throw new InvalidOrderException("Order contains no items");
+        }
+
+        orderDTOItems.forEach(itemDTO -> {
+            OrderedItem item = new OrderedItem();
 
             if (itemDTO.getProductId() != null) {
-                Optional<Product> itemProduct = productRepository.findById(itemDTO.getProductId());
+                Product itemProduct = productRepository.findById(itemDTO.getProductId())
+                        .orElseThrow(() -> new InvalidOrderException(
+                                "Product not found: " + itemDTO.getProductId()
+                        ));
 
-                if (itemProduct.isEmpty()) {
-                    System.out.println("WARNUNG: Product nicht gefunden: " + itemDTO.getProductId().byteValue());
-                    return; // Item überspringen
-                }
-
-                item.setProduct(itemProduct.get());
-
-                Optional<Integer> optionalQuantity = Optional.ofNullable(itemDTO.getQuantity());
-                item.setQuantity(optionalQuantity.orElse(0));
+                item.setProduct(itemProduct);
+                item.setQuantity(Optional.ofNullable(itemDTO.getQuantity()).orElse(0));
+                item.setBottleSale(Boolean.TRUE.equals(itemDTO.getBottleSale()));
+                item.setCustomPrice(itemDTO.getCustomPrice());
                 purchaseOrder.addOrderedItem(item);
+            } else {
+                throw new InvalidOrderException("Product ID is Empty");
             }
-
         });
 
         // tokensIssued = Summe der Mengen aller Artikel mit Pfand
@@ -67,8 +78,8 @@ public class PurchaseOrderService {
         return purchaseOrderRepository.save(purchaseOrder);
     }
 
-    public PurchaseOrder findOrderById(Long id) {
-        return purchaseOrderRepository.findOrderById(id);
+    public Optional<PurchaseOrder> findOrderById(Long id) {
+        return purchaseOrderRepository.findById(id);
     }
 
     public List<PurchaseOrder> findOrders(Integer year, OffsetDateTime from, OffsetDateTime to) {
@@ -82,10 +93,24 @@ public class PurchaseOrderService {
         }
         return purchaseOrderRepository.findAll();
     }
+    public BatchImportResult importOrdersBatch(BatchOrderImportDto batchOrderImportDto) {
+        List<PurchaseOrder> created = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
-    public List<OrderedItem> findOrdersByItemName(String name) {
-        return orderedItemRepository.findByProduct_Name(name);
+        List<PurchaseOrderDto> orders = Objects.requireNonNullElse(batchOrderImportDto.getOrders(), List.of());
+        for (int i = 0; i < orders.size(); i++) {
+            try {
+                PurchaseOrder order = createPurchaseOrder(orders.get(i));
+                created.add(order);
+            } catch (Exception e) {
+                log.error("Fehler beim Importieren von Bestellung an Index {}: {}", i, e.getMessage());
+                errors.add("Order at index " + i + ": " + e.getMessage());
+            }
+        }
+        return new BatchImportResult(created, errors);
     }
 
+    public record BatchImportResult(List<PurchaseOrder> created, List<String> errors) {
+    }
 
 }

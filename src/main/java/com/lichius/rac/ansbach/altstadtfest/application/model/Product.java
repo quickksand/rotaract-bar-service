@@ -1,7 +1,6 @@
 package com.lichius.rac.ansbach.altstadtfest.application.model;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.ColumnDefault;
 import rotaract.bar.infrastructure.api.controller.model.ProductDto;
 
 import java.math.BigDecimal;
@@ -21,13 +20,12 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Column
+    private BigDecimal originalPrice;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProductDto.CategoryEnum category;
-
-    @ColumnDefault("false")
-    @Column(nullable = false)
-    private boolean requiresDeposit;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "product_ingredients",
@@ -35,20 +33,17 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
     private List<Ingredient> ingredients = new ArrayList<>();
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean outOfStock = false;
+
     public Product() {
     }
 
     public Product(String name, BigDecimal price, ProductDto.CategoryEnum category) {
         this.name = name;
         this.price = price;
+        this.originalPrice = price;
         this.category = category;
-    }
-
-    public Product(String name, BigDecimal price, ProductDto.CategoryEnum category, boolean requiresDeposit) {
-        this.name = name;
-        this.price = price;
-        this.category = category;
-        this.requiresDeposit = requiresDeposit;
     }
 
 
@@ -58,6 +53,14 @@ public class Product {
 
     public BigDecimal getPrice() {
         return price;
+    }
+
+    public BigDecimal getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public void setOriginalPrice(BigDecimal originalPrice) {
+        this.originalPrice = originalPrice;
     }
 
     public void setName(String name) {
@@ -92,12 +95,12 @@ public class Product {
         this.ingredients = ingredients;
     }
 
-    public boolean isRequiresDeposit() {
-        return requiresDeposit;
+    public boolean isOutOfStock() {
+        return outOfStock;
     }
 
-    public void setRequiresDeposit(boolean requiresDeposit) {
-        this.requiresDeposit = requiresDeposit;
+    public void setOutOfStock(boolean outOfStock) {
+        this.outOfStock = outOfStock;
     }
 
 }
