@@ -13,14 +13,20 @@ public interface OrderedItemRepository extends JpaRepository<OrderedItem, Long> 
     List<OrderedItem> findByProduct_Name(String productName);
 
     @Query("SELECT oi.product.id, oi.product.name, oi.product.category, " +
-            "SUM(oi.quantity), SUM(oi.quantity * oi.product.price) " +
+            "SUM(oi.quantity), " +
+            "SUM(CASE WHEN oi.bottleSale = true AND oi.customPrice IS NOT NULL " +
+            "         THEN oi.customPrice " +
+            "         ELSE oi.quantity * oi.product.price END) " +
             "FROM OrderedItem oi " +
             "GROUP BY oi.product.id, oi.product.name, oi.product.category " +
             "ORDER BY SUM(oi.quantity) DESC")
     List<Object[]> aggregateProductSalesAll();
 
     @Query("SELECT oi.product.id, oi.product.name, oi.product.category, " +
-            "SUM(oi.quantity), SUM(oi.quantity * oi.product.price) " +
+            "SUM(oi.quantity), " +
+            "SUM(CASE WHEN oi.bottleSale = true AND oi.customPrice IS NOT NULL " +
+            "         THEN oi.customPrice " +
+            "         ELSE oi.quantity * oi.product.price END) " +
             "FROM OrderedItem oi JOIN oi.purchaseOrder po " +
             "WHERE po.orderedAt >= :from AND po.orderedAt <= :to " +
             "GROUP BY oi.product.id, oi.product.name, oi.product.category " +

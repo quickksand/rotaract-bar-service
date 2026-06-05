@@ -49,6 +49,14 @@ public class Product {
         this.category = category;
     }
 
+    public Product(String name, BigDecimal price, ProductDto.CategoryEnum category, boolean requiresDeposit) {
+        this.name = name;
+        this.price = price;
+        this.originalPrice = price;
+        this.category = category;
+        this.requiresDeposit = requiresDeposit;
+    }
+
 
     public String getName() {
         return name;
