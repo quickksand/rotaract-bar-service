@@ -36,6 +36,9 @@ public class Product {
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean outOfStock = false;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean requiresDeposit = false;
+
     public Product() {
     }
 
@@ -44,6 +47,14 @@ public class Product {
         this.price = price;
         this.originalPrice = price;
         this.category = category;
+    }
+
+    public Product(String name, BigDecimal price, ProductDto.CategoryEnum category, boolean requiresDeposit) {
+        this.name = name;
+        this.price = price;
+        this.originalPrice = price;
+        this.category = category;
+        this.requiresDeposit = requiresDeposit;
     }
 
 
@@ -101,6 +112,14 @@ public class Product {
 
     public void setOutOfStock(boolean outOfStock) {
         this.outOfStock = outOfStock;
+    }
+
+    public boolean isRequiresDeposit() {
+        return requiresDeposit;
+    }
+
+    public void setRequiresDeposit(boolean requiresDeposit) {
+        this.requiresDeposit = requiresDeposit;
     }
 
 }

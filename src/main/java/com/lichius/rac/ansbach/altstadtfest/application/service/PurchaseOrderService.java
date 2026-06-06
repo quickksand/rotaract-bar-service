@@ -16,6 +16,8 @@ import rotaract.bar.infrastructure.api.controller.model.BatchOrderImportDto;
 import rotaract.bar.infrastructure.api.controller.model.OrderedItemDto;
 import rotaract.bar.infrastructure.api.controller.model.PurchaseOrderDto;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -66,6 +68,13 @@ public class PurchaseOrderService {
             }
         });
 
+        // tokensIssued = Summe der Mengen aller Artikel mit Pfand
+        int tokensIssued = purchaseOrder.getItems().stream()
+                .filter(item -> item.getProduct() != null && item.getProduct().isRequiresDeposit())
+                .mapToInt(OrderedItem::getQuantity)
+                .sum();
+        purchaseOrder.setTokensIssued(tokensIssued);
+
         return purchaseOrderRepository.save(purchaseOrder);
     }
 
@@ -73,10 +82,17 @@ public class PurchaseOrderService {
         return purchaseOrderRepository.findById(id);
     }
 
-    public List<PurchaseOrder> findOrders() {
+    public List<PurchaseOrder> findOrders(Integer year, OffsetDateTime from, OffsetDateTime to) {
+        if (from != null && to != null) {
+            return purchaseOrderRepository.findByOrderedAtBetween(from.toLocalDateTime(), to.toLocalDateTime());
+        }
+        if (year != null) {
+            LocalDateTime start = LocalDateTime.of(year, 1, 1, 0, 0);
+            LocalDateTime end = start.plusYears(1).minusNanos(1);
+            return purchaseOrderRepository.findByOrderedAtBetween(start, end);
+        }
         return purchaseOrderRepository.findAll();
     }
-
     public BatchImportResult importOrdersBatch(BatchOrderImportDto batchOrderImportDto) {
         List<PurchaseOrder> created = new ArrayList<>();
         List<String> errors = new ArrayList<>();
@@ -91,7 +107,6 @@ public class PurchaseOrderService {
                 errors.add("Order at index " + i + ": " + e.getMessage());
             }
         }
-
         return new BatchImportResult(created, errors);
     }
 

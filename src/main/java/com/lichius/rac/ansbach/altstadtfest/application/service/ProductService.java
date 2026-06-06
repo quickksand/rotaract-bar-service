@@ -15,7 +15,10 @@ import rotaract.bar.infrastructure.api.controller.model.ProductDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -77,23 +80,22 @@ public class ProductService {
     private List<Product> getDefaultProducts() {
         return List.of(
                 // DRINKS
-                new Product("Cuba Libre", new BigDecimal("6.50"), ProductDto.CategoryEnum.DRINKS),
-                new Product("Gin Tonic", new BigDecimal("7.00"), ProductDto.CategoryEnum.DRINKS),
-                new Product("Moscow Mule", new BigDecimal("7.00"), ProductDto.CategoryEnum.DRINKS),
-                new Product("Munich Mule", new BigDecimal("7.00"), ProductDto.CategoryEnum.DRINKS),
-                new Product("Wodka Bull", new BigDecimal("7.00"), ProductDto.CategoryEnum.DRINKS),
-                new Product("Aperol Spritz", new BigDecimal("6.00"), ProductDto.CategoryEnum.DRINKS),
-                new Product("Sarti Spritz", new BigDecimal("6.00"), ProductDto.CategoryEnum.DRINKS),
-                new Product("Wildberry Lillet", new BigDecimal("6.00"), ProductDto.CategoryEnum.DRINKS),
+                new Product("Cuba Libre", new BigDecimal("6.50"), ProductDto.CategoryEnum.DRINKS, true),
+                new Product("Gin Tonic", new BigDecimal("7.00"), ProductDto.CategoryEnum.DRINKS, true),
+                new Product("Moscow Mule", new BigDecimal("7.00"), ProductDto.CategoryEnum.DRINKS, true),
+                new Product("Munich Mule", new BigDecimal("7.00"), ProductDto.CategoryEnum.DRINKS, true),
+                new Product("Wodka Bull", new BigDecimal("7.00"), ProductDto.CategoryEnum.DRINKS, true),
+                new Product("Aperol Spritz", new BigDecimal("7.00"), ProductDto.CategoryEnum.DRINKS, true),
+                new Product("Sarti Spritz", new BigDecimal("7.00"), ProductDto.CategoryEnum.DRINKS, true),
+                new Product("Wildberry Lillet", new BigDecimal("7.00"), ProductDto.CategoryEnum.DRINKS, true),
                 // Bier, Wein & Nonalkoholisches
-                new Product("Bier 0,33", new BigDecimal("3.50"), ProductDto.CategoryEnum.BEER_WINE_NONALC),
-                new Product("Bier Alkfrei", new BigDecimal("3.50"), ProductDto.CategoryEnum.BEER_WINE_NONALC),
-                new Product("Radler 0,5", new BigDecimal("4.00"), ProductDto.CategoryEnum.BEER_WINE_NONALC),
-                new Product("Weinschorle", new BigDecimal("4.00"), ProductDto.CategoryEnum.BEER_WINE_NONALC),
-                new Product("Cola", new BigDecimal("3.00"), ProductDto.CategoryEnum.BEER_WINE_NONALC),
-                new Product("Sprite", new BigDecimal("3.00"), ProductDto.CategoryEnum.BEER_WINE_NONALC),
-                new Product("Wasser", new BigDecimal("2.50"), ProductDto.CategoryEnum.BEER_WINE_NONALC),
-                // SHOTS
+                new Product("Bier 0,33", new BigDecimal("4.00"), ProductDto.CategoryEnum.BEER_WINE_NONALC, true),
+                new Product("Bier Alkfrei", new BigDecimal("4.00"), ProductDto.CategoryEnum.BEER_WINE_NONALC, true),
+                new Product("Radler 0,5", new BigDecimal("4.00"), ProductDto.CategoryEnum.BEER_WINE_NONALC, true),
+                new Product("Weinschorle", new BigDecimal("4.00"), ProductDto.CategoryEnum.BEER_WINE_NONALC, true),
+                new Product("Cola/Sprite/Fanta", new BigDecimal("3.00"), ProductDto.CategoryEnum.BEER_WINE_NONALC, true),
+                new Product("Wasser", new BigDecimal("2.50"), ProductDto.CategoryEnum.BEER_WINE_NONALC, true),
+                // SHOTS — kein Becher
                 new Product("Brausegeist / Wodka Ahoi!", new BigDecimal("2.00"), ProductDto.CategoryEnum.SHOTS),
                 new Product("Mexikaner", new BigDecimal("2.00"), ProductDto.CategoryEnum.SHOTS)
         );
@@ -121,8 +123,10 @@ public class ProductService {
             List<Product> products = productRepository.findAllByOrderByIdAsc();
             boolean migrated = false;
             Map<String, BigDecimal> defaultPrices = new HashMap<>();
+            Map<String, Boolean> defaultDeposit = new HashMap<>();
             for (Product p : getDefaultProducts()) {
                 defaultPrices.put(p.getName(), p.getOriginalPrice());
+                defaultDeposit.put(p.getName(), p.isRequiresDeposit());
             }
             for (Product product : products) {
                 if (product.getOriginalPrice() == null) {
@@ -130,10 +134,16 @@ public class ProductService {
                     product.setOriginalPrice(defPrice != null ? defPrice : product.getPrice());
                     migrated = true;
                 }
+                // Migration: requiresDeposit aus Default-Produkten übernehmen
+                Boolean shouldRequireDeposit = defaultDeposit.get(product.getName());
+                if (shouldRequireDeposit != null && shouldRequireDeposit != product.isRequiresDeposit()) {
+                    product.setRequiresDeposit(shouldRequireDeposit);
+                    migrated = true;
+                }
             }
             if (migrated) {
                 productRepository.saveAll(products);
-                log.info("✅ originalPrice für bestehende Produkte migriert");
+                log.info("✅ Bestehende Produkte migriert (originalPrice / requiresDeposit)");
             }
         }
     }
